@@ -30,6 +30,8 @@ npm start
 
 The local page connects through the **official MCP SDK** using Streamable HTTP, protocol **2025-11-25**. State is saved atomically in `temp/recall-relay-runtime/state.json`. A fresh model conversation or restarted server can resume the same case.
 
+Keep the page open while your MCP assistant works. **The screen follows committed tool results live.** Choose **Focus view** for a large current-holder card, one next step and optional on-device reading of that step. The browser's phrase shortcuts remain a labeled conversation simulator.
+
 For an MCP-capable assistant, add this local server to its configuration:
 
 ```json
@@ -46,9 +48,10 @@ The single-household development server binds to loopback. `RECALL_RELAY_PORT` a
 
 | Layer | Behavior |
 |---|---|
-| Browser concept | Real state transitions, cross-browser handoff links, local persistence, optional on-device read-aloud, calendar export. Typed phrase routing provides the Alexa+ interaction simulation. |
+| Browser concept | Real state transitions, cross-browser handoff links, local persistence, a next-step Focus view, device-local label-photo preview, optional on-device read-aloud, calendar export. Typed phrase routing provides the Alexa+ interaction simulation. |
 | Local MCP | Real initialize, tools/list and tools/call through the official SDK. Structured results, serialized mutations, atomic persistence, idempotency and revision checks. |
-| Assistant integration | A connected MCP agent chooses tools. Two fresh Cursor Agent conversations exercised preparation and stateful resumption; see [live probe evidence](docs/live-mcp-probe.json). |
+| Assistant integration | A connected MCP agent chooses tools. Fresh Cursor Agent conversations exercised preparation and stateful resumption, with the same open screen following each committed step; see [live continuity evidence](docs/live-case-continuity.json). |
+| Case observation | The local screen subscribes to saved case snapshots. The static companion follows changes across tabs in the same browser. Reopening an accepted handoff resumes its owner journal. |
 | Official facts | Curated CPSC and manufacturer source excerpts; precise model matching and source-bound remedy guidance. |
 | Manufacturer request | The actual form opens on SharkNinja's recall-program site. Contact details, serial and photo are entered there. |
 | Progress | The current owner reports completed steps and receipt of the confirmation email. `SAMPLE-ACK` is explicitly labeled in the walkthrough. |
@@ -57,7 +60,11 @@ The browser concept and local MCP server use **the same domain engine**. A porta
 
 ## Walk through the concept
 
-Choose **I passed it on**, keep sample label `OP301 I07`, and make a card for Alex. Open its link in a separate browser profile, or use the clearly labeled recipient preview. Confirm the label, stop pressure cooking, prepare the label photo and open the official request handoff. Use **Demo: use SAMPLE-ACK** for the sample confirmation. Record disposal of the original lid, reload the page, and finish the replacement steps.
+Choose **I passed it on**, keep sample label `OP301 I07`, and make a card for Alex. Open its link in a separate browser profile, or use the clearly labeled recipient preview. As Alex, read the physical label; optionally take or choose a photo and zoom in alongside the model field. Confirm the label, stop pressure cooking, prepare the label photo and open the official request handoff. Use **Demo: use SAMPLE-ACK** for the sample confirmation. Record disposal of the original lid, reopen the same handoff, and finish the replacement steps.
+
+Photo previews use device-local blob URLs and last for the current tab. Use **Save photo for the official form** to keep a copy. The saved case holds the owner's readiness report. The owner supplies their original photo and delivery details directly to the manufacturer.
+
+Development-server handoff links open the [public browser companion](https://blucca.github.io/recall-relay/) on the recipient's device, where their separate case is saved. A fork can set `PUBLIC_HANDOFF_URL` in `web/app.mjs` to its own published companion.
 
 Use the source links to inspect the exact model list, the additional-code rule, function-level remedy and the manufacturer's instructions for a gifted cooker.
 
@@ -66,6 +73,7 @@ Use the source links to inspect the exact model list, the additional-code rule, 
 ```sh
 npm test                 # Domain contract and recovery checks
 npm run smoke:mcp        # Real protocol, persistence and restart checks
+npm run smoke:events     # External MCP mutation -> persisted, live screen snapshot
 npm run build:static     # Browser-only bundle in temp/recall-relay-runtime/site/
 npm run build:static -- --outdir /path/to/output
 ```
@@ -73,6 +81,8 @@ npm run build:static -- --outdir /path/to/output
 The static bundle works at a website subpath and stores its household in that browser. Handoff content travels in the link fragment. The local server supplies the real MCP variant.
 
 Architecture and tool interfaces: [CONTRACT.md](CONTRACT.md). Third-party source scope and attribution: [data/source-notes.md](data/source-notes.md).
+
+Observed interaction friction and tool feedback: [development field notes](docs/friction-log.md). The [first MCP probe](docs/live-mcp-probe.json) records the earlier preparation/resumption run.
 
 ## Authorship
 

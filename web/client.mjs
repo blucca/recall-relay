@@ -36,6 +36,17 @@ export function createClient() {
           if (text) return JSON.parse(text);
           throw new Error('The MCP tool returned an empty result. Resume the case and try again.');
         },
+        watch(onUpdate, onStatus) {
+          const events = new EventSource(new URL(runtime.events ?? '/api/events', location.href));
+          events.onopen = () => onStatus('connected');
+          events.onerror = () => onStatus('reconnecting');
+          events.onmessage = (event) => {
+            let result;
+            try { result = JSON.parse(event.data); } catch { return; }
+            onUpdate(result);
+          };
+          return () => events.close();
+        },
       };
     }
 
@@ -50,24 +61,58 @@ export function createClient() {
           const output = name === 'reset_demo'
             ? engine.executeTool(engine.createState(), 'get_case')
             : engine.executeTool(state, name, args);
-          if (output.result.ok) globalThis.localStorage.setItem(storageKey, JSON.stringify(output.state));
+          if (output.result.ok) {
+            const serialized = JSON.stringify(output.state);
+            if (serialized !== saved) globalThis.localStorage.setItem(storageKey, serialized);
+          }
           return output.result;
         };
         return globalThis.navigator?.locks
           ? globalThis.navigator.locks.request(storageKey, run)
           : run();
       },
+      watch(onUpdate, onStatus) {
+        let active = true;
+        let refreshing;
+        const refresh = () => {
+          if (!active || refreshing) return;
+          refreshing = callTool('get_case').then(result => {
+            if (!active) return;
+            onStatus('browser-local');
+            onUpdate(result);
+          }).catch(() => { if (active) onStatus('reconnecting'); })
+            .finally(() => { refreshing = undefined; });
+        };
+        const storage = (event) => {
+          if (event.key === storageKey || event.key === null) refresh();
+        };
+        const visible = () => { if (document.visibilityState === 'visible') refresh(); };
+        window.addEventListener('storage', storage);
+        window.addEventListener('focus', refresh);
+        document.addEventListener('visibilitychange', visible);
+        refresh();
+        return () => {
+          active = false;
+          window.removeEventListener('storage', storage);
+          window.removeEventListener('focus', refresh);
+          document.removeEventListener('visibilitychange', visible);
+        };
+      },
     };
+  }
+
+  function initialize() {
+    initialized ??= connect().catch(error => {
+      initialized = undefined;
+      mode = 'connecting';
+      throw error;
+    });
+    return initialized;
   }
 
   function callTool(name, args = {}) {
     const operation = queue.then(async () => {
-      initialized ??= connect().catch(error => {
-        initialized = undefined;
-        mode = 'connecting';
-        throw error;
-      });
-      const backend = await initialized;
+      const backend = await initialize();
       const properties = backend.definitions.find(tool => tool.name === name)?.inputSchema?.properties ?? {};
       const input = { ...args };
       if (properties.requestId && input.requestId === undefined) input.requestId = globalThis.crypto.randomUUID();
@@ -82,8 +127,37 @@ export function createClient() {
     return operation;
   }
 
+  /** Observe committed case snapshots; tool execution stays on the selected backend. */
+  function watch(onUpdate, onStatus = () => {}) {
+    let active = true;
+    let stop;
+    let retry;
+    let seen;
+    const status = value => { if (active) onStatus(value); };
+    const update = result => {
+      if (!active || !result?.ok || !result.case) return;
+      lastRevision = result.case.revision;
+      const key = `${result.case.id}:${result.case.revision}`;
+      if (seen === key) return;
+      seen = key;
+      onUpdate(result);
+    };
+    const start = async () => {
+      try {
+        const backend = await initialize();
+        if (active) stop = backend.watch(update, status);
+      } catch {
+        if (!active) return;
+        status('reconnecting');
+        retry = setTimeout(start, 1500);
+      }
+    };
+    void start();
+    return () => { active = false; clearTimeout(retry); stop?.(); };
+  }
+
   return {
-    callTool,
+    callTool, watch,
     reset: () => callTool('reset_demo'),
     get mode() { return mode; },
     get protocolVersion() { return protocolVersion; },

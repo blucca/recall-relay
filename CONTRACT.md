@@ -2,7 +2,7 @@
 
 Purpose: help a recall reach the person who now owns a gifted/second-hand product, and help that owner finish the remedy. Initial case: US CPSC 25-247, SharkNinja OP300-series pressure-cooking lid. Official facts stay source-linked; household history and progress are explicitly owner-reported.
 
-## Interfaces (2026-10-08)
+## Interfaces (2026-10-09)
 
 `src/engine.mjs` exports:
 - `createState({ owner = 'Sam', now } = {})`
@@ -13,7 +13,7 @@ Purpose: help a recall reach the person who now owns a gifted/second-hand produc
 Every result: `{ ok: boolean, case: CaseView, ...payload, error?: { code, message } }`.
 `CaseView`:
 ```
-{ id, revision, owner, productName, rawModel, model, stage,
+{ id, revision, owner, priorOwner, receivedHandoffId, productName, rawModel, model, stage,
   statusLabel, nextAction: { tool, label, args },
   facts: [{ label, text, sourceUrl }],
   checklist: [{ id, label, done }],
@@ -36,9 +36,13 @@ Stages: `identify_product`, `confirm_current_owner`, `remedy_required`, `claim_r
 
 ## Frontend
 
-`web/index.html`, `web/styles.css`, `web/app.mjs`: polished voice-first Alexa+ concept simulator. Persistent sample household, real domain tools, official recall evidence. Local text/touch interaction works; optional browser speech synthesis/recognition. Label simulation clearly. No photo/voice cloud upload. Real official form opens in another tab.
+`web/index.html`, `web/styles.css`, `web/app.mjs`: voice-first Alexa+ concept simulator. Persistent sample household, real domain tools, official recall evidence. Local text/touch interaction works; optional on-device speech synthesis reads the current next step. Focus view presents the current holder and one action. The real official form opens in another tab.
 
-Client module `web/client.mjs` exposes `createClient()` -> `{ callTool(name, args): Promise<result>, reset(): Promise<result>, mode }`. Protocol agent implements this. Browser with local server defaults live MCP; static host uses the same engine with localStorage. Successful current case shown from `result.case`.
+`web/label-photo.mjs`: optional JPEG/PNG/WebP capture or selection, device-local preview and download. The current owner transcribes the model and confirms the physical label. Temporary image data stays in a browser blob URL; domain storage holds the readiness report. A new owner case clears the previous tab-local image.
+
+Client module `web/client.mjs` exposes `createClient()` -> `{ callTool(name, args): Promise<result>, reset(): Promise<result>, watch(onUpdate, onStatus?): unsubscribe, mode }`. Browser with local server defaults live MCP; static host uses the same engine with localStorage. Successful current case is shown from `result.case`.
+
+`watch` observes `{ ok: true, case, change?: { tool, at } }`; status values are `connected`, `reconnecting`, and `browser-local`. The app defers observer updates during its own action, merges by case identity/revision, and preserves active same-stage form inputs. Static mode observes storage events and refreshes on focus/visibility. An incoming card whose ID matches `receivedHandoffId` resumes the saved case immediately.
 
 Minimum meaningful interaction: identify label `OP301 I07`; distinguish prior-owner knowledge and recipient verification; prepare a portable handoff; recipient resumes and follows correct official remedy; prepare claim; record owner acknowledgement; return later and complete replacement steps. Clear source and operation provenance.
 
@@ -46,10 +50,6 @@ Minimum meaningful interaction: identify label `OP301 I07`; distinguish prior-ow
 
 `src/server.mjs` exposes Streamable HTTP `/mcp` protocol >=2025-11-25 using official SDK. Persist one household state per server instance in `RECALL_RELAY_STATE_FILE`, default workspace temp path. Bind loopback by default. Serve frontend at `/`, engine at `/src/`, official data at `/data/`. Protocol client uses initialize/tools-list/tools-call; give tools structuredContent plus text content. Transport requests mutate shared domain state serially. Client fixture mode uses the identical engine.
 
-## Ownership for current build
-- Root: engine, tests, README, strategy, repository and publishing.
-- Product/data agent: data/recall.json, data/source-notes.md only.
-- Protocol agent: src/server.mjs, web/client.mjs, package.json, scripts/mcp-smoke.mjs only.
-- UI agent: web/index.html, web/styles.css, web/app.mjs only.
+`GET /api/events` publishes server-sent case snapshots under the same loopback/origin rules. Each observer starts with the saved current case. Mutations broadcast after atomic persistence. Reconnection receives the latest snapshot; server shutdown releases observers and heartbeat timers. Tool execution continues through MCP.
 
-Keep generated/runtime files under /home/ima/repos/gain/temp/. Source is original and separate from BidDelta.
+Generated/runtime files live under the workspace `temp/` directory. Source is original and separate from BidDelta.

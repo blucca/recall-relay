@@ -112,6 +112,7 @@ function caseView(state) {
   if (state.product.assessment === 'needs_clear_label') identityText = 'Read the label again, keeping the model and any following production code separate. Example: OP301 I07.';
   return {
     id: state.id, revision: state.revision, owner: state.owner, priorOwner: state.priorOwner,
+    receivedHandoffId: state.receivedHandoffId,
     productName: state.product.name, rawModel: state.product.rawModel, model: state.product.model,
     stage, statusLabel: labels[stage], nextAction: nextAction(state),
     facts: [

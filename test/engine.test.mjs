@@ -51,6 +51,7 @@ test('handoff contains a minimal product record; recipient gets an independent j
   assert.equal(accepted.case.model, null);
   assert.equal(accepted.case.events.length, 1);
   assert.equal(accepted.case.owner, 'Alex');
+  assert.equal(recipient.call('get_case').case.receivedHandoffId, result.handoff.id);
   assert.equal(sender.state.events.length, 2);
   assert.equal(recipient.call('accept_handoff', { owner: 'Alex', handoff: result.handoff }).error.code, 'HANDOFF_ALREADY_OPEN');
   assert.equal(recipient.call('accept_handoff', { owner: 'Alex', handoff: { ...result.handoff, recallId: 'invented' } }).error.code, 'HANDOFF_SCOPE');

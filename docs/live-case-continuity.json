@@ -1,0 +1,200 @@
+{
+  "recordedAt": "2026-10-09",
+  "scope": "Fictional Sam-to-Alex household statements. Real CPSC recall data, real Cursor Agent MCP calls and observed live browser updates. Manufacturer acknowledgement and remedy progress are owner-reported sample inputs.",
+  "transport": "Official MCP SDK, Streamable HTTP 2025-11-25; case observation uses server-sent events.",
+  "baselineObservation": {
+    "serverRevision": 7,
+    "screenStillDisplayed": "I stopped pressure cooking"
+  },
+  "sessions": [
+    {
+      "title": "Prepare with an independent MCP assistant",
+      "calls": [
+        {
+          "tool": "get_case",
+          "arguments": {},
+          "ok": true,
+          "case": {
+            "id": "rr-fa026391-4872-457e-b626-4f312cf86ff7",
+            "revision": 4,
+            "owner": "Alex",
+            "priorOwner": "Sam",
+            "model": "OP301",
+            "stage": "remedy_required",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "I stopped pressure cooking",
+              "args": {
+                "step": "pressure_use_stopped"
+              }
+            }
+          }
+        },
+        {
+          "tool": "record_step",
+          "arguments": {
+            "step": "pressure_use_stopped",
+            "expectedRevision": 4,
+            "requestId": "alex-pressure-stopped"
+          },
+          "ok": true,
+          "case": {
+            "id": "rr-fa026391-4872-457e-b626-4f312cf86ff7",
+            "revision": 5,
+            "owner": "Alex",
+            "priorOwner": "Sam",
+            "model": "OP301",
+            "stage": "remedy_required",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "My label photo is ready",
+              "args": {
+                "step": "label_photo_ready"
+              }
+            }
+          }
+        },
+        {
+          "tool": "record_step",
+          "arguments": {
+            "step": "label_photo_ready",
+            "expectedRevision": 5,
+            "requestId": "alex-label-photo-ready"
+          },
+          "ok": true,
+          "case": {
+            "id": "rr-fa026391-4872-457e-b626-4f312cf86ff7",
+            "revision": 6,
+            "owner": "Alex",
+            "priorOwner": "Sam",
+            "model": "OP301",
+            "stage": "claim_ready",
+            "nextAction": {
+              "tool": "prepare_claim",
+              "label": "Prepare my free-lid request",
+              "args": {}
+            }
+          }
+        },
+        {
+          "tool": "prepare_claim",
+          "arguments": {
+            "expectedRevision": 6,
+            "requestId": "alex-prepare-claim"
+          },
+          "ok": true,
+          "case": {
+            "id": "rr-fa026391-4872-457e-b626-4f312cf86ff7",
+            "revision": 7,
+            "owner": "Alex",
+            "priorOwner": "Sam",
+            "model": "OP301",
+            "stage": "claim_ready",
+            "nextAction": {
+              "tool": "record_claim",
+              "label": "I received the confirmation email",
+              "args": {
+                "confirmationReceived": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Resume in a fresh conversation with the screen watching",
+      "calls": [
+        {
+          "tool": "get_case",
+          "arguments": {},
+          "ok": true,
+          "case": {
+            "id": "rr-fa026391-4872-457e-b626-4f312cf86ff7",
+            "revision": 7,
+            "owner": "Alex",
+            "priorOwner": "Sam",
+            "model": "OP301",
+            "stage": "claim_ready",
+            "nextAction": {
+              "tool": "record_claim",
+              "label": "I received the confirmation email",
+              "args": {
+                "confirmationReceived": true
+              }
+            }
+          }
+        },
+        {
+          "tool": "record_claim",
+          "arguments": {
+            "confirmationReceived": true,
+            "expectedRevision": 7,
+            "requestId": "alex-record-claim-confirm-20261009"
+          },
+          "ok": true,
+          "case": {
+            "id": "rr-fa026391-4872-457e-b626-4f312cf86ff7",
+            "revision": 8,
+            "owner": "Alex",
+            "priorOwner": "Sam",
+            "model": "OP301",
+            "stage": "awaiting_replacement",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "I disposed of the original lid",
+              "args": {
+                "step": "old_lid_disposed"
+              }
+            }
+          }
+        },
+        {
+          "tool": "record_step",
+          "arguments": {
+            "step": "old_lid_disposed",
+            "expectedRevision": 8,
+            "requestId": "alex-old-lid-disposed-20261009"
+          },
+          "ok": true,
+          "case": {
+            "id": "rr-fa026391-4872-457e-b626-4f312cf86ff7",
+            "revision": 9,
+            "owner": "Alex",
+            "priorOwner": "Sam",
+            "model": "OP301",
+            "stage": "awaiting_replacement",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "The replacement lid has arrived",
+              "args": {
+                "step": "replacement_received"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "liveBrowserUpdates": [
+    {
+      "revision": "8",
+      "caseId": "rr-fa026391-4872-457e-b626-4f312cf86ff7",
+      "owner": "Sam \u2192 Alex",
+      "next": "Retire the original pressure lid.",
+      "at": "2026-10-08T18:14:38.124Z"
+    },
+    {
+      "revision": "9",
+      "caseId": "rr-fa026391-4872-457e-b626-4f312cf86ff7",
+      "owner": "Sam \u2192 Alex",
+      "next": "Your next step can wait.",
+      "at": "2026-10-08T18:14:39.756Z"
+    }
+  ],
+  "browserObservation": {
+    "sameOpenTab": true,
+    "navigationEntriesDuringResume": 1,
+    "finalRevision": 9,
+    "finalNextStep": "Your next step can wait."
+  }
+}

@@ -82,6 +82,35 @@ export async function startServer(options = {}) {
   const clientBundle = await browserSdk(runtimeDir);
   let queue = Promise.resolve();
   let activePort;
+  const observers = new Map();
+
+  function caseSnapshot(change) {
+    const { case: currentCase } = executeTool(state, 'get_case').result;
+    return { ok: true, case: currentCase, ...(change ? { change } : {}) };
+  }
+
+  function sendCase(response, snapshot) {
+    if (response.destroyed || response.writableEnded) return;
+    const { id, revision } = snapshot.case;
+    // A reconnect starts with the latest persisted snapshot, including a reset's new case id.
+    if (!response.write(`id: ${id}:${revision}\ndata: ${JSON.stringify(snapshot)}\n\n`)) response.destroy();
+  }
+
+  function observe(response) {
+    response.writeHead(200, {
+      'Content-Type': 'text/event-stream; charset=utf-8',
+      'Connection': 'keep-alive', 'X-Accel-Buffering': 'no',
+    });
+    const heartbeat = setInterval(() => {
+      if (!response.write(': keepalive\n\n')) response.destroy();
+    }, 15_000);
+    heartbeat.unref();
+    const cleanup = () => { clearInterval(heartbeat); observers.delete(response); };
+    observers.set(response, cleanup);
+    response.once('close', cleanup);
+    response.write('retry: 1500\n\n');
+    sendCase(response, caseSnapshot());
+  }
 
   function runTool(name, args) {
     const operation = queue.then(async () => {
@@ -91,6 +120,8 @@ export async function startServer(options = {}) {
       if (output.result.ok && (name === 'reset_demo' || JSON.stringify(output.state) !== JSON.stringify(state))) {
         await writeState(stateFile, output.state);
         state = output.state;
+        const snapshot = caseSnapshot({ tool: name, at: new Date().toISOString() });
+        for (const response of observers.keys()) sendCase(response, snapshot);
       }
       return output.result;
     });
@@ -122,6 +153,14 @@ export async function startServer(options = {}) {
     }
     try {
       const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+      if (pathname === '/api/events') {
+        if (request.method !== 'GET') {
+          response.setHeader('Allow', 'GET');
+          return json(response, 405, { error: 'Use GET to observe the saved household.' });
+        }
+        observe(response);
+        return;
+      }
       if (pathname === '/mcp') {
         if (request.method !== 'POST') {
           response.setHeader('Allow', 'POST');
@@ -144,6 +183,7 @@ export async function startServer(options = {}) {
         return json(response, 200, {
           application: 'recall-relay', mode: 'mcp', transport: 'streamable-http',
           protocolVersion: LATEST_PROTOCOL_VERSION, endpoint: '/mcp', browserSdk: '/vendor/mcp-client.mjs',
+          events: '/api/events',
           scope: 'one local household', persistence: 'local state file',
         });
       }
@@ -179,9 +219,11 @@ export async function startServer(options = {}) {
   return {
     server: httpServer, url, stateFile,
     async close() {
+      const closed = new Promise((done, fail) => httpServer.close(error => error ? fail(error) : done()));
+      for (const [response, cleanup] of observers) { cleanup(); response.end(); }
       await queue;
       httpServer.closeIdleConnections();
-      await new Promise((done, fail) => httpServer.close(error => error ? fail(error) : done()));
+      await closed;
     },
   };
 }
