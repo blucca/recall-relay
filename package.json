@@ -4,7 +4,9 @@
   "private": true,
   "description": "A local-first product recall handoff and remedy companion with a real MCP server.",
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "start": "node src/server.mjs",
     "build:static": "node scripts/build-static.mjs",
@@ -14,6 +16,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.32.1",
-    "esbuild": "0.28.2"
+    "esbuild": "0.28.2",
+    "@blucca/relay-state": "https://github.com/blucca/relay-state/releases/download/v0.1.1/blucca-relay-state-0.1.1.tgz"
   }
 }

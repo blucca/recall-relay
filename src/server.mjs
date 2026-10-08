@@ -1,12 +1,13 @@
 import { createServer } from 'node:http';
-import { readFile, mkdir, writeFile, rename } from 'node:fs/promises';
+import { readFile, mkdir } from 'node:fs/promises';
 import { basename, dirname, extname, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { randomUUID } from 'node:crypto';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { CallToolRequestSchema, ListToolsRequestSchema, LATEST_PROTOCOL_VERSION } from '@modelcontextprotocol/sdk/types.js';
 import { build } from 'esbuild';
+import { openSnapshotStore } from '@blucca/relay-state';
+import { createSnapshotStream } from '@blucca/relay-state/http';
 import { createState, executeTool, toolDefinitions } from './engine.mjs';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
@@ -33,28 +34,6 @@ function json(response, status, value) {
   response.end(JSON.stringify(value));
 }
 
-async function writeState(path, state) {
-  await mkdir(dirname(path), { recursive: true });
-  const pending = `${path}.${process.pid}.${randomUUID()}.pending`;
-  await writeFile(pending, `${JSON.stringify(state, null, 2)}\n`, { mode: 0o600 });
-  await rename(pending, path);
-}
-
-async function loadState(path) {
-  try {
-    const state = JSON.parse(await readFile(path, 'utf8'));
-    if (state.schemaVersion !== 1 || !executeTool(state, 'get_case').result.ok) {
-      throw new Error('Saved state validation failed. Select a fresh RECALL_RELAY_STATE_FILE to start another household.');
-    }
-    return state;
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw error;
-    const state = createState();
-    await writeState(path, state);
-    return state;
-  }
-}
-
 async function browserSdk(runtimeDir) {
   await mkdir(runtimeDir, { recursive: true });
   const outfile = resolve(runtimeDir, 'mcp-client.mjs');
@@ -79,55 +58,26 @@ export async function startServer(options = {}) {
   }
   const runtimeDir = resolve(options.runtimeDir ?? defaultRuntimeDir);
   const stateFile = resolve(options.stateFile ?? process.env.RECALL_RELAY_STATE_FILE ?? resolve(runtimeDir, 'state.json'));
-  let state = await loadState(stateFile);
   const clientBundle = await browserSdk(runtimeDir);
-  let queue = Promise.resolve();
+  const store = await openSnapshotStore({
+    file: stateFile,
+    initial: createState,
+    validate: state => state.schemaVersion === 1 && executeTool(state, 'get_case').result.ok,
+    project: state => ({ ok: true, case: executeTool(state, 'get_case').result.case }),
+  });
+  const events = createSnapshotStream(store, {
+    eventId: ({ value }) => `${value.case.id}:${value.case.revision}`,
+    encode: ({ value, change }) => ({ ...value, ...(change ? { change } : {}) }),
+  });
   let activePort;
-  const observers = new Map();
-
-  function caseSnapshot(change) {
-    const { case: currentCase } = executeTool(state, 'get_case').result;
-    return { ok: true, case: currentCase, ...(change ? { change } : {}) };
-  }
-
-  function sendCase(response, snapshot) {
-    if (response.destroyed || response.writableEnded) return;
-    const { id, revision } = snapshot.case;
-    // A reconnect starts with the latest persisted snapshot, including a reset's new case id.
-    if (!response.write(`id: ${id}:${revision}\ndata: ${JSON.stringify(snapshot)}\n\n`)) response.destroy();
-  }
-
-  function observe(response) {
-    response.writeHead(200, {
-      'Content-Type': 'text/event-stream; charset=utf-8',
-      'Connection': 'keep-alive', 'X-Accel-Buffering': 'no',
-    });
-    const heartbeat = setInterval(() => {
-      if (!response.write(': keepalive\n\n')) response.destroy();
-    }, 15_000);
-    heartbeat.unref();
-    const cleanup = () => { clearInterval(heartbeat); observers.delete(response); };
-    observers.set(response, cleanup);
-    response.once('close', cleanup);
-    response.write('retry: 1500\n\n');
-    sendCase(response, caseSnapshot());
-  }
 
   function runTool(name, args) {
-    const operation = queue.then(async () => {
+    return store.transact(state => {
       const output = name === 'reset_demo'
         ? executeTool(createState(), 'get_case')
-        : executeTool(structuredClone(state), name, args);
-      if (output.result.ok && (name === 'reset_demo' || JSON.stringify(output.state) !== JSON.stringify(state))) {
-        await writeState(stateFile, output.state);
-        state = output.state;
-        const snapshot = caseSnapshot({ tool: name, at: new Date().toISOString() });
-        for (const response of observers.keys()) sendCase(response, snapshot);
-      }
-      return output.result;
-    });
-    queue = operation.then(() => undefined, () => undefined);
-    return operation;
+        : executeTool(state, name, args);
+      return { state: output.state, result: output.result, commit: output.result.ok };
+    }, { change: { tool: name, at: new Date().toISOString() } });
   }
 
   function createMcpServer() {
@@ -159,7 +109,7 @@ export async function startServer(options = {}) {
           response.setHeader('Allow', 'GET');
           return json(response, 405, { error: 'Use GET to observe the saved household.' });
         }
-        observe(response);
+        events.handle(request, response);
         return;
       }
       if (pathname === '/mcp') {
@@ -212,18 +162,24 @@ export async function startServer(options = {}) {
   });
   httpServer.requestTimeout = 30_000;
   httpServer.headersTimeout = 10_000;
-  await new Promise((done, fail) => {
-    httpServer.once('error', fail);
-    httpServer.listen(port, host, () => { httpServer.off('error', fail); done(); });
-  });
+  try {
+    await new Promise((done, fail) => {
+      httpServer.once('error', fail);
+      httpServer.listen(port, host, () => { httpServer.off('error', fail); done(); });
+    });
+  } catch (error) {
+    events.close();
+    await store.close();
+    throw error;
+  }
   activePort = httpServer.address().port;
   const url = `http://${host === '::1' ? '[::1]' : host}:${activePort}`;
   return {
     server: httpServer, url, stateFile,
     async close() {
       const closed = new Promise((done, fail) => httpServer.close(error => error ? fail(error) : done()));
-      for (const [response, cleanup] of observers) { cleanup(); response.end(); }
-      await queue;
+      events.close();
+      await store.close();
       httpServer.closeIdleConnections();
       await closed;
     },
