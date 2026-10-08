@@ -4,7 +4,9 @@
 
 A voice-first recall handoff and remedy companion for the person who now owns a gifted or second-hand appliance. Built as an Alexa+ concept with a working, assistant-independent MCP service.
 
-[Try the browser concept](https://blucca.github.io/recall-relay/) · [Official recall](https://www.cpsc.gov/Recalls/2025/SharkNinja-Recalls-1-8-Million-Foodi-Multi-Function-Pressure-Cookers-Due-to-Burn-Hazard-Serious-Burn-Injuries-Reported) · [Source evidence](data/source-notes.md)
+[Watch the 2:35 demo](https://blucca.github.io/recall-relay/demo/) · [Try the browser concept](https://blucca.github.io/recall-relay/) · [Official recall](https://www.cpsc.gov/Recalls/2025/SharkNinja-Recalls-1-8-Million-Foodi-Multi-Function-Pressure-Cookers-Due-to-Burn-Hazard-Serious-Burn-Injuries-Reported) · [Source evidence](data/source-notes.md)
+
+The [first playable demo](docs/demo-walkthrough.md) follows one sample household through two actual MCP agent conversations, a phone-sized label check, the official form, and a saved return. It includes English narration and captions. [Recorded tool sequence](docs/demo-evidence.json).
 
 ## The missing handoff
 

@@ -23,7 +23,8 @@ const mime = {
   '.html': 'text/html; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml',
-  '.png': 'image/png', '.webp': 'image/webp', '.ico': 'image/x-icon',
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.ico': 'image/x-icon',
+  '.mp4': 'video/mp4', '.vtt': 'text/vtt; charset=utf-8',
   '.md': 'text/plain; charset=utf-8', '.txt': 'text/plain; charset=utf-8',
 };
 
@@ -192,7 +193,8 @@ export async function startServer(options = {}) {
       else {
         const match = pathname.match(/^\/(src|data|web)\/(.*)$/);
         const directory = resolve(projectRoot, match?.[1] ?? 'web');
-        const relative = match ? (match[2] || 'index.html') : (pathname === '/' ? 'index.html' : pathname.slice(1));
+        const requested = match ? match[2] : pathname.slice(1);
+        const relative = !requested || requested.endsWith('/') ? `${requested}index.html` : requested;
         file = resolve(directory, relative);
         if (!file.startsWith(`${directory}${sep}`) || !mime[extname(file)]) {
           return json(response, 404, { error: 'Resource unavailable.' });

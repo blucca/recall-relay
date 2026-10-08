@@ -1,0 +1,181 @@
+{
+  "recordedAt": "2026-10-09T03:07:00+08:00",
+  "scope": "Fictional Sam-to-Alex household; official US CPSC recall 25-247; owner-reported physical actions. A few days later is a scenario time jump.",
+  "execution": "Actual model-selected tools through the official MCP SDK, Streamable HTTP 2025-11-25. Tool labels in the edited video follow these calls.",
+  "caseId": "rr-cdbf5e6a-bca3-41d0-8ef6-bacb68487ee3",
+  "runs": [
+    {
+      "conversation": "prepare",
+      "host": "Cursor Agent",
+      "newConversation": true,
+      "toolCalls": [
+        {
+          "tool": "get_case",
+          "input": {},
+          "result": {
+            "ok": true,
+            "caseId": "rr-cdbf5e6a-bca3-41d0-8ef6-bacb68487ee3",
+            "revision": 4,
+            "owner": "Alex",
+            "stage": "remedy_required",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "I stopped pressure cooking",
+              "args": {
+                "step": "pressure_use_stopped"
+              }
+            }
+          }
+        },
+        {
+          "tool": "record_step",
+          "input": {
+            "step": "pressure_use_stopped",
+            "expectedRevision": 4,
+            "requestId": "alex-pressure-stopped-1"
+          },
+          "result": {
+            "ok": true,
+            "caseId": "rr-cdbf5e6a-bca3-41d0-8ef6-bacb68487ee3",
+            "revision": 5,
+            "owner": "Alex",
+            "stage": "remedy_required",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "My label photo is ready",
+              "args": {
+                "step": "label_photo_ready"
+              }
+            }
+          }
+        },
+        {
+          "tool": "record_step",
+          "input": {
+            "step": "label_photo_ready",
+            "expectedRevision": 5,
+            "requestId": "alex-label-photo-1"
+          },
+          "result": {
+            "ok": true,
+            "caseId": "rr-cdbf5e6a-bca3-41d0-8ef6-bacb68487ee3",
+            "revision": 6,
+            "owner": "Alex",
+            "stage": "claim_ready",
+            "nextAction": {
+              "tool": "prepare_claim",
+              "label": "Prepare my free-lid request",
+              "args": {}
+            }
+          }
+        },
+        {
+          "tool": "prepare_claim",
+          "input": {
+            "expectedRevision": 6,
+            "requestId": "alex-prepare-claim-1"
+          },
+          "result": {
+            "ok": true,
+            "caseId": "rr-cdbf5e6a-bca3-41d0-8ef6-bacb68487ee3",
+            "revision": 7,
+            "owner": "Alex",
+            "stage": "claim_ready",
+            "nextAction": {
+              "tool": "record_claim",
+              "label": "I received the confirmation email",
+              "args": {
+                "confirmationReceived": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "conversation": "resume",
+      "host": "Cursor Agent",
+      "newConversation": true,
+      "toolCalls": [
+        {
+          "tool": "get_case",
+          "input": {},
+          "result": {
+            "ok": true,
+            "caseId": "rr-cdbf5e6a-bca3-41d0-8ef6-bacb68487ee3",
+            "revision": 9,
+            "owner": "Alex",
+            "stage": "awaiting_replacement",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "The replacement lid has arrived",
+              "args": {
+                "step": "replacement_received"
+              }
+            }
+          }
+        },
+        {
+          "tool": "record_step",
+          "input": {
+            "step": "replacement_received",
+            "expectedRevision": 9,
+            "requestId": "alex-replacement-received-20261009"
+          },
+          "result": {
+            "ok": true,
+            "caseId": "rr-cdbf5e6a-bca3-41d0-8ef6-bacb68487ee3",
+            "revision": 10,
+            "owner": "Alex",
+            "stage": "replacement_arrived",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "I fitted the replacement lid",
+              "args": {
+                "step": "replacement_installed"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "sameOpenScreenObservations": [
+    {
+      "name": "agent-prepare-before",
+      "revision": "Saved \u00b7 r4"
+    },
+    {
+      "name": "agent-prepare-visible",
+      "revision": "Saved \u00b7 r7"
+    },
+    {
+      "name": "waiting",
+      "revision": "Saved \u00b7 r9"
+    },
+    {
+      "name": "agent-resume-visible",
+      "revision": "Saved \u00b7 r10"
+    },
+    {
+      "name": "resolved",
+      "revision": "Saved \u00b7 r11"
+    }
+  ],
+  "officialForm": {
+    "url": "https://www.rqa-inc.com/client/SharkNinja/SubForm/index.html",
+    "observedTitle": "SharkNinja Recall",
+    "action": "Viewed the manufacturer form; recorded SAMPLE-ACK in the companion walkthrough."
+  },
+  "capture": {
+    "phoneViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "desktopViewport": {
+      "width": 1180,
+      "height": 860
+    },
+    "pageErrors": []
+  }
+}
