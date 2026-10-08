@@ -1,0 +1,89 @@
+{
+  "id": "cpsc-25-247",
+  "recallNumber": "25-247",
+  "title": "SharkNinja Recalls 1.8 Million Foodi Multi-Function Pressure Cookers Due to Burn Hazard; Serious Burn Injuries Reported",
+  "productName": "SharkNinja Foodi OP300 Series Multi-Function Pressure Cookers",
+  "brand": "Ninja",
+  "country": "US",
+  "recallDate": "2025-05-01",
+  "retrievedAt": "2026-10-08T14:23:47Z",
+  "sourceUrl": "https://www.cpsc.gov/Recalls/2025/SharkNinja-Recalls-1-8-Million-Foodi-Multi-Function-Pressure-Cookers-Due-to-Burn-Hazard-Serious-Burn-Injuries-Reported",
+  "manufacturerUrl": "https://www.rqa-inc.com/client/SharkNinja/",
+  "claimUrl": "https://www.rqa-inc.com/client/SharkNinja/SubForm/index.html",
+  "models": [
+    "OP300",
+    "OP301",
+    "OP301A",
+    "OP302",
+    "OP302BRN",
+    "OP302HCN",
+    "OP302HAQ",
+    "OP302HW",
+    "OP302HB",
+    "OP305",
+    "OP305CO",
+    "OP350CO"
+  ],
+  "additionalCodeRule": "Read a listed model together with any separately printed additional code. CPSC's example identifies the label OP301 I07 as model OP301, with I07 as its additional code. Preserve letters within listed models such as OP301A and OP305CO.",
+  "remedy": {
+    "pressureFunction": "Immediately stop using the pressure-cooking function. Keep it stopped until the replacement pressure-cooking lid arrives.",
+    "otherFunctions": "The cooker's air frying and other functions can continue to be used, as stated in the official recall remedy.",
+    "replacement": "Contact SharkNinja through the official recall program for a free replacement pressure-cooking lid, shipped at no charge.",
+    "disposal": "Remove the existing pressure-cooking lid and dispose of it according to local household-waste rules. Use the replacement lid for future pressure cooking. The manufacturer's detailed FAQ places disposal after recall registration."
+  },
+  "claimRequirements": [
+    "The manufacturer program accepts USA and Canada residents; this Recall Relay case uses the U.S. CPSC model list.",
+    "Complete the official manufacturer form with the recipient's first and last name, email address and confirmation, telephone number, country, and delivery address.",
+    "Provide a clear photo of the product label on the rear of the unit, with both model and serial number legible. The form accepts camera capture or a photo upload.",
+    "Select the unit's model in the manufacturer form and enter its serial number.",
+    "The owner completes the form's declaration to remove and dispose of the old pressure-cooking lid under local rules, keep pressure cooking stopped until the replacement arrives, and use the replacement lid for subsequent pressure cooking.",
+    "Complete the request on the manufacturer's website. Its instructions say an email confirmation with further instructions will follow submission."
+  ],
+  "quotes": [
+    {
+      "id": "us-model-list",
+      "text": "Model numbers OP300, OP301, OP301A, OP302, OP302BRN, OP302HCN, OP302HAQ, OP302HW, OP302HB, OP305, OP305CO and OP350CO are included in this recall and are printed on a label on the side of the cooker.",
+      "sourceUrl": "https://www.cpsc.gov/Recalls/2025/SharkNinja-Recalls-1-8-Million-Foodi-Multi-Function-Pressure-Cookers-Due-to-Burn-Hazard-Serious-Burn-Injuries-Reported"
+    },
+    {
+      "id": "additional-code",
+      "text": "For example, a unit labeled “OP301 I07” is a model OP301 unit.",
+      "sourceUrl": "https://www.cpsc.gov/Recalls/2025/SharkNinja-Recalls-1-8-Million-Foodi-Multi-Function-Pressure-Cookers-Due-to-Burn-Hazard-Serious-Burn-Injuries-Reported"
+    },
+    {
+      "id": "functional-remedy",
+      "text": "Consumers should immediately stop using the product’s pressure-cooking function and contact SharkNinja for a free replacement lid. Consumers can continue to use the product’s air frying and other functions.",
+      "sourceUrl": "https://www.cpsc.gov/Recalls/2025/SharkNinja-Recalls-1-8-Million-Foodi-Multi-Function-Pressure-Cookers-Due-to-Burn-Hazard-Serious-Burn-Injuries-Reported"
+    },
+    {
+      "id": "separately-purchased-lids",
+      "text": "Any OP300 series replacement pressure cooker lids purchased as an additional part are also included in this recall.",
+      "sourceUrl": "https://www.cpsc.gov/Recalls/2025/SharkNinja-Recalls-1-8-Million-Foodi-Multi-Function-Pressure-Cookers-Due-to-Burn-Hazard-Serious-Burn-Injuries-Reported"
+    },
+    {
+      "id": "handoff-forward",
+      "text": "Please forward notice of the recall to the person to whom you gave away or sold the pressure cooker so they can participate in the recall and receive a new lid.",
+      "sourceUrl": "https://www.rqa-inc.com/client/SharkNinja/"
+    },
+    {
+      "id": "disposal-after-registration",
+      "text": "Once you are registered, throw away the original lid in accordance with any local requirements and we will ship you a free replacement pressure-cooking lid at no charge to you.",
+      "sourceUrl": "https://www.rqa-inc.com/client/SharkNinja/"
+    },
+    {
+      "id": "label-photo",
+      "text": "In the next step, you will need to take a photo of the product label showing the model and serial number of the unit. This label is found on the rear surface of the product. Your photo should show a legible model and serial number as shown in the sample below:",
+      "sourceUrl": "https://www.rqa-inc.com/client/SharkNinja/SubForm/index.html"
+    },
+    {
+      "id": "claim-confirmation",
+      "text": "You will receive an email confirmation with further instructions once submitted.",
+      "sourceUrl": "https://www.rqa-inc.com/client/SharkNinja/SubForm/index.html"
+    },
+    {
+      "id": "claim-territory",
+      "text": "This program is open only to USA and Canada residents.",
+      "sourceUrl": "https://www.rqa-inc.com/client/SharkNinja/SubForm/index.html"
+    }
+  ]
+}

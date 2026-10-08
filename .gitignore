@@ -1,0 +1,7 @@
+node_modules/
+temp/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store

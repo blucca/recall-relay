@@ -1,0 +1,284 @@
+{
+  "recordedAt": "2026-10-08",
+  "host": "Cursor Agent CLI, separate model conversations",
+  "transport": "Real MCP Streamable HTTP 2025-11-25 on loopback",
+  "data": "Fictional household statements; real CPSC recall data; owner-reported sample progress",
+  "firstTask": "Prepare the official form handoff from a confirmed OP301 I07 label, stopped pressure cooking and a ready label photo.",
+  "resumeTask": "Recover the same case, record the owner receiving a confirmation email without a reference, and record disposal of the original lid. Replacement delivery remains pending.",
+  "sessions": [
+    {
+      "conversation": "prepare_in_first_conversation",
+      "calls": [
+        {
+          "tool": "reset_demo",
+          "arguments": {},
+          "ok": true,
+          "case": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a",
+            "revision": 0,
+            "owner": "Sam",
+            "rawModel": "",
+            "model": null,
+            "stage": "identify_product",
+            "nextAction": {
+              "tool": "check_model",
+              "label": "Read the exact model label",
+              "args": {
+                "model": "",
+                "confirmedFromLabel": true
+              }
+            },
+            "claimReference": null
+          },
+          "latestEvent": null
+        },
+        {
+          "tool": "get_case",
+          "arguments": {},
+          "ok": true,
+          "case": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a",
+            "revision": 0,
+            "owner": "Sam",
+            "rawModel": "",
+            "model": null,
+            "stage": "identify_product",
+            "nextAction": {
+              "tool": "check_model",
+              "label": "Read the exact model label",
+              "args": {
+                "model": "",
+                "confirmedFromLabel": true
+              }
+            },
+            "claimReference": null
+          },
+          "latestEvent": null
+        },
+        {
+          "tool": "check_model",
+          "arguments": {
+            "model": "OP301 I07",
+            "confirmedFromLabel": true,
+            "expectedRevision": 0,
+            "requestId": "probe-check-model-op301i07"
+          },
+          "ok": true,
+          "case": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a",
+            "revision": 1,
+            "owner": "Sam",
+            "rawModel": "OP301 I07",
+            "model": "OP301",
+            "stage": "remedy_required",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "I stopped pressure cooking",
+              "args": {
+                "step": "pressure_use_stopped"
+              }
+            },
+            "claimReference": null
+          },
+          "latestEvent": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a:1:1",
+            "at": "2026-10-08T14:49:10.502Z",
+            "label": "Confirmed label OP301 I07; official model OP301",
+            "actor": "Sam",
+            "provenance": "owner-reported"
+          }
+        },
+        {
+          "tool": "record_step",
+          "arguments": {
+            "step": "pressure_use_stopped",
+            "expectedRevision": 1,
+            "requestId": "probe-pressure-stopped"
+          },
+          "ok": true,
+          "case": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a",
+            "revision": 2,
+            "owner": "Sam",
+            "rawModel": "OP301 I07",
+            "model": "OP301",
+            "stage": "remedy_required",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "My label photo is ready",
+              "args": {
+                "step": "label_photo_ready"
+              }
+            },
+            "claimReference": null
+          },
+          "latestEvent": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a:2:2",
+            "at": "2026-10-08T14:49:15.521Z",
+            "label": "Stopped using the pressure-cooking function",
+            "actor": "Sam",
+            "provenance": "owner-reported"
+          }
+        },
+        {
+          "tool": "record_step",
+          "arguments": {
+            "step": "label_photo_ready",
+            "expectedRevision": 2,
+            "requestId": "probe-label-photo-ready"
+          },
+          "ok": true,
+          "case": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a",
+            "revision": 3,
+            "owner": "Sam",
+            "rawModel": "OP301 I07",
+            "model": "OP301",
+            "stage": "claim_ready",
+            "nextAction": {
+              "tool": "prepare_claim",
+              "label": "Prepare my free-lid request",
+              "args": {}
+            },
+            "claimReference": null
+          },
+          "latestEvent": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a:3:3",
+            "at": "2026-10-08T14:49:17.628Z",
+            "label": "Prepared a legible photo of the model and serial label",
+            "actor": "Sam",
+            "provenance": "owner-reported"
+          }
+        },
+        {
+          "tool": "prepare_claim",
+          "arguments": {
+            "expectedRevision": 3,
+            "requestId": "probe-prepare-claim"
+          },
+          "ok": true,
+          "case": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a",
+            "revision": 4,
+            "owner": "Sam",
+            "rawModel": "OP301 I07",
+            "model": "OP301",
+            "stage": "claim_ready",
+            "nextAction": {
+              "tool": "record_claim",
+              "label": "I received the confirmation email",
+              "args": {
+                "confirmationReceived": true
+              }
+            },
+            "claimReference": null
+          },
+          "latestEvent": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a:4:4",
+            "at": "2026-10-08T14:49:20.612Z",
+            "label": "Prepared the official replacement-lid request; manufacturer form is the next handoff",
+            "actor": "Sam",
+            "provenance": "local-tool"
+          }
+        }
+      ]
+    },
+    {
+      "conversation": "resume_in_fresh_conversation",
+      "calls": [
+        {
+          "tool": "get_case",
+          "arguments": {},
+          "ok": true,
+          "case": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a",
+            "revision": 4,
+            "owner": "Sam",
+            "rawModel": "OP301 I07",
+            "model": "OP301",
+            "stage": "claim_ready",
+            "nextAction": {
+              "tool": "record_claim",
+              "label": "I received the confirmation email",
+              "args": {
+                "confirmationReceived": true
+              }
+            },
+            "claimReference": null
+          },
+          "latestEvent": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a:4:4",
+            "at": "2026-10-08T14:49:20.612Z",
+            "label": "Prepared the official replacement-lid request; manufacturer form is the next handoff",
+            "actor": "Sam",
+            "provenance": "local-tool"
+          }
+        },
+        {
+          "tool": "record_claim",
+          "arguments": {
+            "confirmationReceived": true,
+            "expectedRevision": 4,
+            "requestId": "sam-record-claim-confirmation-no-ref"
+          },
+          "ok": true,
+          "case": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a",
+            "revision": 5,
+            "owner": "Sam",
+            "rawModel": "OP301 I07",
+            "model": "OP301",
+            "stage": "awaiting_replacement",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "I disposed of the original lid",
+              "args": {
+                "step": "old_lid_disposed"
+              }
+            },
+            "claimReference": null
+          },
+          "latestEvent": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a:5:5",
+            "at": "2026-10-08T14:55:07.128Z",
+            "label": "Owner reported receiving the manufacturer’s confirmation email",
+            "actor": "Sam",
+            "provenance": "owner-reported"
+          }
+        },
+        {
+          "tool": "record_step",
+          "arguments": {
+            "step": "old_lid_disposed",
+            "expectedRevision": 5,
+            "requestId": "sam-record-step-old-lid-disposed"
+          },
+          "ok": true,
+          "case": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a",
+            "revision": 6,
+            "owner": "Sam",
+            "rawModel": "OP301 I07",
+            "model": "OP301",
+            "stage": "awaiting_replacement",
+            "nextAction": {
+              "tool": "record_step",
+              "label": "The replacement lid has arrived",
+              "args": {
+                "step": "replacement_received"
+              }
+            },
+            "claimReference": null
+          },
+          "latestEvent": {
+            "id": "rr-92813a29-f7c9-434c-a3f1-a4770980386a:6:6",
+            "at": "2026-10-08T14:55:10.084Z",
+            "label": "Disposed of the original pressure-cooking lid under local rules",
+            "actor": "Sam",
+            "provenance": "owner-reported"
+          }
+        }
+      ]
+    }
+  ]
+}
