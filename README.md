@@ -4,7 +4,9 @@
 
 A voice-first recall handoff and remedy companion for the person who now owns a gifted or second-hand appliance. Built as an Alexa+ concept with a working, assistant-independent MCP service.
 
-[Watch the 2:35 demo](https://blucca.github.io/recall-relay/demo/) · [Try the browser concept](https://blucca.github.io/recall-relay/) · [Official recall](https://www.cpsc.gov/Recalls/2025/SharkNinja-Recalls-1-8-Million-Foodi-Multi-Function-Pressure-Cookers-Due-to-Burn-Hazard-Serious-Burn-Injuries-Reported) · [Source evidence](data/source-notes.md)
+[Watch the 2:35 demo](https://blucca.github.io/recall-relay/demo/) · [YouTube](https://www.youtube.com/watch?v=DJpOeX6mIPQ) · [Try the browser concept](https://blucca.github.io/recall-relay/) · [Official recall](https://www.cpsc.gov/Recalls/2025/SharkNinja-Recalls-1-8-Million-Foodi-Multi-Function-Pressure-Cookers-Due-to-Burn-Hazard-Serious-Burn-Injuries-Reported) · [Source evidence](data/source-notes.md)
+
+**For reviewers:** [project story](docs/project-story.md) · [hands-on judging guide](docs/judging-guide.md) · [tool feedback and friction entries](docs/product-feedback.md).
 
 The [first playable demo](docs/demo-walkthrough.md) follows one sample household through two actual MCP agent conversations, a phone-sized label check, the official form, and a saved return. It includes English narration and captions. [Recorded tool sequence](docs/demo-evidence.json).
 
@@ -84,7 +86,7 @@ The static bundle works at a website subpath and stores its household in that br
 
 Architecture and tool interfaces: [CONTRACT.md](CONTRACT.md). Third-party source scope and attribution: [data/source-notes.md](data/source-notes.md).
 
-Observed interaction friction and tool feedback: [development field notes](docs/friction-log.md). The [first MCP probe](docs/live-mcp-probe.json) records the earlier preparation/resumption run.
+Observed interaction friction: [development field notes](docs/friction-log.md). Submission-ready [product feedback](docs/product-feedback.md) covers onboarding, tool use, and actionable improvements. The [first MCP probe](docs/live-mcp-probe.json) records the earlier preparation/resumption run.
 
 ## Authorship
 
