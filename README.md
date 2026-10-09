@@ -4,6 +4,8 @@
 
 A voice-first recall handoff and remedy companion for the person who now owns a gifted or second-hand appliance. Built as an Alexa+ concept with a working, assistant-independent MCP service.
 
+![Recall Relay follows a sample appliance from Sam to Alex and preserves the next replacement-lid step.](docs/images/recall-relay-overview.png)
+
 [Watch the 2:35 demo](https://blucca.github.io/recall-relay/demo/) · [YouTube](https://www.youtube.com/watch?v=DJpOeX6mIPQ) · [Try the browser concept](https://blucca.github.io/recall-relay/) · [Official recall](https://www.cpsc.gov/Recalls/2025/SharkNinja-Recalls-1-8-Million-Foodi-Multi-Function-Pressure-Cookers-Due-to-Burn-Hazard-Serious-Burn-Injuries-Reported) · [Source evidence](data/source-notes.md)
 
 **For reviewers:** [project story](docs/project-story.md) · [hands-on judging guide](docs/judging-guide.md) · [tool feedback and friction entries](docs/product-feedback.md) · [Open Source Mini contribution](docs/open-source-contribution.md).

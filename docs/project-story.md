@@ -33,6 +33,8 @@ A shared JavaScript domain engine powers a public browser companion and a self-h
 
 Every tool response includes the current case, its revision, source-linked facts, and next action. State lives outside transport sessions, with serialized writes, atomic persistence, idempotency, and revision checks. A read-only event stream keeps the local screen aligned with committed assistant actions. The public companion stores its own browser-local case and follows changes across its tabs.
 
+The server uses our additional Open Source Mini contribution, [Relay State](https://github.com/blucca/relay-state): an independently installable, MIT-licensed commit-and-observe library. A separate Return Desk application demonstrates reuse through a live tool write, an update in the existing screen, and a fresh-client resumption after a process restart.
+
 The [2:35 YouTube demo](https://www.youtube.com/watch?v=DJpOeX6mIPQ) includes two actual Cursor Agent conversations: preparation advances the open case from revision **4 to 7**; a fresh conversation retrieves revision **9** and records arrival at **10**. Alex's final UI action reaches **11**. [Recorded calls](https://github.com/blucca/recall-relay/blob/main/docs/demo-evidence.json) and [judge instructions](https://github.com/blucca/recall-relay/blob/main/docs/judging-guide.md) accompany the runnable source.
 
 ## Challenges we ran into
