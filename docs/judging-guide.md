@@ -10,6 +10,21 @@
 
 The public companion uses the same domain engine as the MCP service. The steps below exercise the actual protocol and persistent service locally.
 
+## Two-minute browser trial
+
+[**Open Sam’s sample card as Alex →**](https://blucca.github.io/recall-relay/#handoff=eyJzY2hlbWFWZXJzaW9uIjoxLCJraW5kIjoicmVjYWxsLXJlbGF5LWhhbmRvZmYiLCJpZCI6ImhhbmRvZmYtNDQ4Yjk4ZWItMGVjNS00YTJkLWI0NWItNjFmZGE5ZTBmODFkIiwicmVjYWxsSWQiOiJjcHNjLTI1LTI0NyIsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMDlUMDQ6MDI6MzEuNTUzWiIsInNlbmRlckxhYmVsIjoiU2FtIiwicmVjaXBpZW50TGFiZWwiOiJBbGV4IiwicHJvZHVjdCI6eyJuYW1lIjoiU2hhcmtOaW5qYSBGb29kaSBPUDMwMCBTZXJpZXMgTXVsdGktRnVuY3Rpb24gUHJlc3N1cmUgQ29va2VycyIsImJyYW5kIjoiTmluamEiLCJyZXBvcnRlZE1vZGVsIjoiT1AzMDEgSTA3In19)
+
+This link goes straight to the recipient side. Sam, Alex and model `OP301 I07` are a sample household; the recall facts come from the official US notice.
+
+1. Choose **This is my cooker**, keeping the sample name Alex.
+2. Confirm the sample label `OP301 I07`. Read the next action shown for Alex.
+3. For this scenario, record **I stopped pressure cooking**. The next action moves to label-photo preparation.
+4. Reopen the **same sample-card link** in the same browser. Look for Alex’s saved next step.
+
+One useful reply: **“I reached __; I paused at __; I expected __.”** [Email that observation](mailto:belgialucca@gmail.com?subject=Recall%20Relay%20two-minute%20trial&body=I%20reached%3A%20%0AI%20paused%20at%3A%20%0AI%20expected%3A%20), or open a [GitHub issue](https://github.com/blucca/recall-relay/issues/new).
+
+The [sample card](sample-handoff.json) was exported by the domain engine. Each browser keeps its own recipient journal. Continue with the complete workflow below to try photo preparation, the sample acknowledgement and remedy completion.
+
 ## Run the MCP version
 
 Prerequisites: **Node.js 22+**, npm, and a browser. Installation retrieves packages from npm; the running local experience uses the included recall dataset. Opening the manufacturer's form uses its public website. A model-driven trial uses your own MCP-capable assistant.

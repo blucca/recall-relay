@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "kind": "recall-relay-handoff",
+  "id": "handoff-448b98eb-0ec5-4a2d-b45b-61fda9e0f81d",
+  "recallId": "cpsc-25-247",
+  "createdAt": "2026-10-09T04:02:31.553Z",
+  "senderLabel": "Sam",
+  "recipientLabel": "Alex",
+  "product": {
+    "name": "SharkNinja Foodi OP300 Series Multi-Function Pressure Cookers",
+    "brand": "Ninja",
+    "reportedModel": "OP301 I07"
+  }
+}

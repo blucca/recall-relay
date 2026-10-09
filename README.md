@@ -8,7 +8,9 @@ A voice-first recall handoff and remedy companion for the person who now owns a 
 
 [Watch the 2:35 demo](https://blucca.github.io/recall-relay/demo/) · [YouTube](https://www.youtube.com/watch?v=DJpOeX6mIPQ) · [Try the browser concept](https://blucca.github.io/recall-relay/) · [Official recall](https://www.cpsc.gov/Recalls/2025/SharkNinja-Recalls-1-8-Million-Foodi-Multi-Function-Pressure-Cookers-Due-to-Burn-Hazard-Serious-Burn-Injuries-Reported) · [Source evidence](data/source-notes.md)
 
-**For reviewers:** [project story](docs/project-story.md) · [hands-on judging guide](docs/judging-guide.md) · [tool feedback and friction entries](docs/product-feedback.md) · [Open Source Mini contribution](docs/open-source-contribution.md).
+**Engineering case study:** [The MCP tool succeeded. The screen was one step behind.](docs/mcp-case-continuity.md) — the observed failure, commit-and-observe design, and a reproducible cross-client trial. [Two-minute recipient trial](docs/judging-guide.md#two-minute-browser-trial).
+
+**For reviewers:** [Devpost submission](https://devpost.com/software/recall-relay) · [project story](docs/project-story.md) · [hands-on judging guide](docs/judging-guide.md) · [tool feedback and friction entries](docs/product-feedback.md) · [Open Source Mini contribution](docs/open-source-contribution.md).
 
 The [first playable demo](docs/demo-walkthrough.md) follows one sample household through two actual MCP agent conversations, a phone-sized label check, the official form, and a saved return. It includes English narration and captions. [Recorded tool sequence](docs/demo-evidence.json).
 
