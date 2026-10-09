@@ -12,7 +12,7 @@ The public companion uses the same domain engine as the MCP service. The steps b
 
 ## Two-minute browser trial
 
-[**Open Sam’s sample card as Alex →**](https://blucca.github.io/recall-relay/#handoff=eyJzY2hlbWFWZXJzaW9uIjoxLCJraW5kIjoicmVjYWxsLXJlbGF5LWhhbmRvZmYiLCJpZCI6ImhhbmRvZmYtNDQ4Yjk4ZWItMGVjNS00YTJkLWI0NWItNjFmZGE5ZTBmODFkIiwicmVjYWxsSWQiOiJjcHNjLTI1LTI0NyIsImNyZWF0ZWRBdCI6IjIwMjYtMTAtMDlUMDQ6MDI6MzEuNTUzWiIsInNlbmRlckxhYmVsIjoiU2FtIiwicmVjaXBpZW50TGFiZWwiOiJBbGV4IiwicHJvZHVjdCI6eyJuYW1lIjoiU2hhcmtOaW5qYSBGb29kaSBPUDMwMCBTZXJpZXMgTXVsdGktRnVuY3Rpb24gUHJlc3N1cmUgQ29va2VycyIsImJyYW5kIjoiTmluamEiLCJyZXBvcnRlZE1vZGVsIjoiT1AzMDEgSTA3In19)
+[**Open Sam’s sample card as Alex →**](https://blucca.github.io/recall-relay/try/)
 
 This link goes straight to the recipient side. Sam, Alex and model `OP301 I07` are a sample household; the recall facts come from the official US notice.
 
