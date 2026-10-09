@@ -72,6 +72,8 @@ Development-server handoff links open the [public browser companion](https://blu
 
 Use the source links to inspect the exact model list, the additional-code rule, function-level remedy and the manufacturer's instructions for a gifted cooker.
 
+The phrase simulator keeps its suggestions aligned with the current holder and saved step. Questions about second-hand ownership or purchase receipts bring up the manufacturer's transfer guidance and official form requirements, with direct source links. The footer offers a short email feedback prompt after trying the journey.
+
 ## Development
 
 ```sh

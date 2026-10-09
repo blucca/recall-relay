@@ -1,5 +1,6 @@
 import { createClient } from './client.mjs';
 import { createLabelPhoto } from './label-photo.mjs';
+import { recall } from '../src/engine.mjs';
 
 const $ = (selector) => document.querySelector(selector);
 const escaper = document.createElement('span');
@@ -348,9 +349,9 @@ function renderWorkspace(c) {
 function suggestions(c) {
   if (ui.incoming) return ['Open the handoff', 'What is recalled?'];
   if (ui.paused) return ['Where were we?'];
+  if (c.stage === 'confirm_current_owner' || (c.stage === 'identify_product' && (ui.intent === 'self' || c.priorOwner))) return ['My label says OP301 I07', 'What is recalled?'];
   if (c.stage === 'identify_product') return ['I gave my Foodi to Alex', 'I have the cooker'];
   if (c.stage === 'handoff_prepared') return [`I’m ${ui.handoff?.recipientLabel || ui.recipient}`, 'Show the handoff'];
-  if (c.stage === 'confirm_current_owner') return ['My label says OP301 I07', 'What is recalled?'];
   if (c.stage === 'resolved') return ['Where were we?', 'Show my case history'];
   const phrase = {
     pressure_use_stopped: 'I stopped pressure cooking', label_photo_ready: 'My label photo is ready',
@@ -368,7 +369,7 @@ function companionStep(c) {
   if (c.stage === 'handoff_prepared') return { title: `Pass care along to ${ui.handoff?.recipientLabel || ui.recipient}.`, description: 'One link carries the recall and the next step. The current owner checks their own cooker.', action: 'share-handoff', label: navigator.share ? 'Share the recall card' : 'Copy the recall link' };
   if (c.stage === 'identify_product' || c.stage === 'confirm_current_owner') return {
     title: c.priorOwner || ui.intent === 'self' || c.rawModel ? 'Start with the actual label.' : 'The cooker changed hands.',
-    description: c.priorOwner ? `${c.priorOwner} shared a model note. Read the exact model on the cooker you have now.` : 'Pass the recall to its current owner, or check the cooker in your hands.',
+    description: c.priorOwner ? `${c.priorOwner} shared a model note. Read the exact model on the cooker you have now.` : ui.intent === 'self' || c.rawModel ? 'Read the exact model on the physical label of the cooker you have now, then confirm it here.' : 'Pass the recall to its current owner, or check the cooker in your hands.',
     action: 'open-details', label: c.priorOwner || ui.intent === 'self' || c.rawModel ? 'Open the label check' : 'Start the handoff',
   };
   if (c.stage === 'resolved') return { title: 'Care, carried through.', description: `${c.owner} reported the original lid retired and the replacement received and fitted. The completed record is saved.`, action: 'open-history', label: 'Read the case history' };
@@ -539,9 +540,10 @@ async function runAction(action) {
   if (action === 'show-history') { $('#journal').open = true; $('#journal').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 }
 
-function commandReply(command, response) {
+function commandReply(command, response, sources = []) {
   const element = $('#spoken-reply');
-  element.innerHTML = `<span class="user-message">You: ${text(command)}</span>${text(response)}`;
+  const links = sources.filter(source => url(source.href)).map(source => `<a href="${text(url(source.href))}" target="_blank" rel="noopener noreferrer">${text(source.label)} ↗</a>`).join(' · ');
+  element.innerHTML = `<span class="user-message">You: ${text(command)}</span>${text(response)}${links ? `<span class="reply-sources">${links}</span>` : ''}`;
   element.hidden = false;
   ui.lastMessage = response;
 }
@@ -550,7 +552,11 @@ async function runCommand(command) {
   const phrase = command.trim();
   const normalized = phrase.toLowerCase().replace(/[’‘]/g, "'");
   let response;
-  if (/\b(where were we|resume|continue my case|show my case)\b/.test(normalized) && !/history/.test(normalized)) {
+  let sources = [];
+  if (/\b(receipt|proof of purchase|second[ -]?hand)\b/.test(normalized)) {
+    response = `SharkNinja's FAQ asks previous owners to forward the recall so the person who received or bought the cooker can participate and receive a new lid. The official form asks for a clear model-and-serial label photo, plus contact and delivery details. This case follows the 12-model US notice. Your next step: ${companionStep(ui.case).label}.`;
+    sources = [{ label: 'Manufacturer FAQ', href: recall.manufacturerUrl }, { label: 'Official form requirements', href: recall.claimUrl }];
+  } else if (/\b(where were we|resume|continue my case|show my case)\b/.test(normalized) && !/history/.test(normalized)) {
     ui.paused = false;
     await invoke('get_case');
     response = `${ui.case.owner}, ${ui.case.statusLabel.toLowerCase()}. Next: ${ui.case.nextAction?.label || 'Keep the completed record'}.`;
@@ -606,8 +612,11 @@ async function runCommand(command) {
     else if (ui.case.stage === 'handoff_prepared') render();
     else openImport();
     response = 'Use the handoff card to continue as the current owner. You’ll confirm your own label.';
-  } else response = `Try “${suggestions(ui.case)[0]}”, or choose the next-step button above.`;
-  commandReply(phrase, response);
+  } else {
+    const step = companionStep(ui.case);
+    response = `${step.title} ${step.description} In this phrase simulator, try “${suggestions(ui.case)[0]}” or use the current step above.`;
+  }
+  commandReply(phrase, response, sources);
 }
 
 document.addEventListener('click', (event) => {
