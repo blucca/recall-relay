@@ -1,8 +1,7 @@
 import { build } from 'esbuild';
-import { copyFile, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, stat, readdir, writeFile } from 'node:fs/promises';
 import { basename, dirname, extname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createHash } from 'node:crypto';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const workspaceRoot = process.env.RECALL_RELAY_WORKSPACE_ROOT ||
@@ -58,8 +57,7 @@ for (const output of bundled.outputFiles) {
   files.push(output.path);
 }
 const artifacts = await Promise.all(files.sort().map(async path => {
-  const bytes = await readFile(path);
-  return { file: relative(outdir, path), bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') };
+  return { file: relative(outdir, path), bytes: (await stat(path)).size };
 }));
 console.log(JSON.stringify({
   ok: true, outdir, entrypoint: 'index.html',
