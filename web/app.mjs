@@ -98,7 +98,7 @@ function setBusy(busy) {
 
 function updateMode() {
   const live = /mcp|live|server/i.test(client?.mode ?? '');
-  const connection = live ? (ui.syncStatus === 'connected' ? 'MCP · live case' : ui.syncStatus === 'reconnecting' ? 'MCP · reconnecting' : 'MCP · connecting') : 'Browser-local · saved';
+  const connection = live ? (ui.syncStatus === 'connected' ? 'Live MCP case' : ui.syncStatus === 'reconnecting' ? 'MCP reconnecting' : 'MCP connecting') : 'Saved in this browser';
   $('#connection-status').innerHTML = `<span class="status-dot"></span>${connection}`;
   $('#connection-status').classList.toggle('is-reconnecting', live && ui.syncStatus === 'reconnecting');
   $('#voice-caption').textContent = live
@@ -221,7 +221,7 @@ function renderSidebar(c) {
     : c.rawModel ? identity?.text || 'The current owner checks the physical label.' : 'Sample transcription · the current owner verifies the label.';
   const verified = Boolean(c.model) && !incoming && c.stage !== 'handoff_prepared';
   const facts = (c.facts || []).filter((fact) => !/identity/i.test(fact.label) && (verified || !/function/i.test(fact.label)));
-  $('#official-facts').innerHTML = facts.map((fact) => `<div class="fact"><span class="fact-label">${text(fact.label)}</span><p>${text(fact.text)}</p>${url(fact.sourceUrl) ? `<a href="${text(url(fact.sourceUrl))}" target="_blank" rel="noopener noreferrer">Official source ↗</a>` : ''}</div>`).join('');
+  $('#official-facts').innerHTML = facts.map((fact) => `<div class="fact"><span class="fact-label">${text(fact.label)}</span><p>${text(fact.text)}</p>${url(fact.sourceUrl) ? `<a href="${text(url(fact.sourceUrl))}" target="_blank" rel="noopener noreferrer">Official source</a>` : ''}</div>`).join('');
   if (c.sourceRetrievedAt) $('#official-facts').insertAdjacentHTML('beforeend', `<p class="provenance-line">US listed models · source checked ${text(formatDate(c.sourceRetrievedAt))}</p>`);
   const sourceLink = $('#source-link');
   sourceLink.href = url(c.sourceUrl);
@@ -245,7 +245,7 @@ function labelForm(c) {
     <input id="model-input" name="model" value="${text(c.rawModel || 'OP301 I07')}" maxlength="100" autocomplete="off" spellcheck="false" required />
     <p class="field-help">Example: OP301 I07. Keep letters within the model and leave a space before an additional code.</p>
     <label class="checkbox-label" for="label-confirmation"><input id="label-confirmation" type="checkbox" name="confirmed" required /><span>I read this on the physical label of the cooker I have now.</span></label>
-    <button id="label-submit" class="primary-button" type="submit" disabled>Check this model <span aria-hidden="true">→</span></button>
+    <button id="label-submit" class="primary-button" type="submit" disabled>Check this model</button>
   </form>`;
 }
 
@@ -253,28 +253,28 @@ function handoffForm(c) {
   return `<form data-form="handoff">
     <div class="field-row"><div><label for="remembered-model">The model you remember</label><input id="remembered-model" name="model" value="${text(c.rawModel || 'OP301 I07')}" maxlength="100" autocomplete="off" spellcheck="false" required /></div><div><label for="recipient-name">Who has it now?</label><input id="recipient-name" name="recipient" value="${text(ui.recipient)}" maxlength="80" autocomplete="given-name" required /></div></div>
     <p class="field-help">A starting note from you. The current owner will verify their own label.</p>
-    <button class="primary-button" type="submit">Make a recall handoff <span aria-hidden="true">→</span></button>
+    <button class="primary-button" type="submit">Make a recall handoff</button>
     <p class="privacy-note"><span aria-hidden="true">↗</span> One link carries the official recall and the next step to the person who has the cooker.</p>
   </form>`;
 }
 
 function renderIdentify(c) {
   if (ui.intent === 'self' || c.priorOwner) {
-    return `<p class="eyebrow">02 / The cooker in your hands</p><h2>Start with the label.</h2><p class="body-copy">One exact model. A clear next step. Find the model on the label on the back or side of your cooker.</p>${c.rawModel ? `<p class="inherited-note">${text(c.facts?.find((fact) => /identity/i.test(fact.label))?.text || '')}</p>` : ''}${labelForm(c)}${c.priorOwner ? '' : '<div class="button-row"><button class="text-link" type="button" data-action="intent-pass">Passed it on? Make a handoff →</button></div>'}`;
+    return `<h2>Start with the label.</h2><p class="body-copy">One exact model. A clear next step. Find the model on the label on the back or side of your cooker.</p>${c.rawModel ? `<p class="inherited-note">${text(c.facts?.find((fact) => /identity/i.test(fact.label))?.text || '')}</p>` : ''}${labelForm(c)}${c.priorOwner ? '' : '<div class="button-row"><button class="text-link" type="button" data-action="intent-pass">Passed it on? Make a handoff</button></div>'}`;
   }
-  return `<p class="eyebrow">01 / A little care, passed along</p><h2>You passed on the cooker.<br />Pass on the next step.</h2><p class="body-copy">The Foodi’s pressure-cooking lid has a recall. Help the person who has it now get the free replacement.</p><div class="choice-tabs" aria-label="Where is your cooker?"><button type="button" data-action="intent-pass" aria-pressed="true">I passed it on</button><button type="button" data-action="intent-self" aria-pressed="false">It’s with me</button></div>${handoffForm(c)}`;
+  return `<h2>Pass the recall<br />to the next owner.</h2><p class="body-copy">The Foodi’s pressure-cooking lid has a recall. Help the person who has it now get the free replacement.</p><div class="choice-tabs" aria-label="Where is your cooker?"><button type="button" data-action="intent-pass" aria-pressed="true">I passed it on</button><button type="button" data-action="intent-self" aria-pressed="false">It’s with me</button></div>${handoffForm(c)}`;
 }
 
 function renderIncoming(packet) {
-  return `<p class="eyebrow">A recall card, from someone you know</p><h2>${text(packet.senderLabel)} passed you<br />a useful next step.</h2><p class="body-copy">The Foodi you received may need a replacement pressure-cooking lid. Check the label on your own cooker to continue.</p><div class="handoff-summary"><span class="handoff-symbol" aria-hidden="true">↗</span><div><strong>Ninja Foodi · ${text(packet.product?.reportedModel || 'Label to check')}</strong><p>Shared model note · official US recall 25-247</p></div></div><form data-form="accept-link"><label for="incoming-owner">Your first name</label><input id="incoming-owner" name="owner" value="${text(packet.recipientLabel || 'Alex')}" maxlength="80" autocomplete="given-name" required /><button class="primary-button" type="submit">This is my cooker <span aria-hidden="true">→</span></button></form><p class="privacy-note"><span aria-hidden="true">✓</span> You start your own case. The previous owner’s private journal stays with their record.</p>`;
+  return `<h2>${text(packet.senderLabel)} sent the recall<br />for your cooker.</h2><p class="body-copy">The Foodi you received may need a replacement pressure-cooking lid. Check the label on your own cooker to continue.</p><div class="handoff-summary"><span class="handoff-symbol" aria-hidden="true">↗</span><div><strong>Ninja Foodi · ${text(packet.product?.reportedModel || 'Label to check')}</strong><p>Shared model note · official US recall 25-247</p></div></div><form data-form="accept-link"><label for="incoming-owner">Your first name</label><input id="incoming-owner" name="owner" value="${text(packet.recipientLabel || 'Alex')}" maxlength="80" autocomplete="given-name" required /><button class="primary-button" type="submit">This is my cooker</button></form><p class="privacy-note"><span aria-hidden="true">✓</span> You start your own case. The previous owner’s private journal stays with their record.</p>`;
 }
 
 function renderHandoff(c) {
   const packet = ui.handoff;
-  if (!packet) return `<p class="eyebrow">Your handoff</p><h2>Get the card ready.</h2>${handoffForm(c)}`;
+  if (!packet) return `<h2>Get the card ready.</h2>${handoffForm(c)}`;
   const recipient = packet.recipientLabel || ui.recipient;
   const localPreview = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
-  return `<p class="eyebrow">01 / Ready to travel</p><h2>For ${text(recipient)}.<br />With the next step attached.</h2><p class="body-copy">Share the handoff link. ${text(recipient)} can check the label, follow the official remedy, and keep a separate record.</p><div class="handoff-summary"><span class="handoff-symbol" aria-hidden="true">↗</span><div><strong>${text(c.owner)} → ${text(recipient)}</strong><p>Ninja Foodi · ${text(packet.product?.reportedModel || 'Label to check')} · recall 25-247</p></div></div><div class="button-row"><button class="primary-button" type="button" data-action="share-handoff">${navigator.share ? 'Share handoff link' : 'Copy handoff link'} <span aria-hidden="true">↗</span></button>${navigator.share ? '<button class="secondary-button" type="button" data-action="copy-link">Copy link</button>' : ''}</div><p class="privacy-note"><span aria-hidden="true">✓</span> Shared: first names, recall identity, model note. Private progress stays in this case. Photos and official form details stay with their owner.</p>${localPreview ? '<p class="field-help">The shared link opens the public browser companion on the recipient’s device. Their case is saved separately there.</p>' : ''}<details class="export-block"><summary>View the link or export the portable card</summary><label for="handoff-link">Handoff link</label><textarea id="handoff-link" rows="3" readonly spellcheck="false">${text(handoffLink(packet))}</textarea><label for="handoff-json">Portable JSON</label><textarea id="handoff-json" rows="4" readonly spellcheck="false">${text(JSON.stringify(packet, null, 2))}</textarea><div class="button-row"><button class="secondary-button" type="button" data-action="copy-json">Copy JSON</button><button class="secondary-button" type="button" data-action="download-handoff">Download card</button></div></details><div class="role-switch"><span class="small-label">Try the other side of the handoff</span><button type="button" class="secondary-button" data-action="try-recipient">Continue as ${text(recipient)} <span aria-hidden="true">→</span></button><p class="small-copy">Demo role switch · the current case is archived and a fresh owner journal begins.</p></div>`;
+  return `<h2>A recall card<br />for ${text(recipient)}.</h2><p class="body-copy">Share the handoff link. ${text(recipient)} can check the label, follow the official remedy, and keep a separate record.</p><div class="handoff-summary"><span class="handoff-symbol" aria-hidden="true">↗</span><div><strong>${text(c.owner)} → ${text(recipient)}</strong><p>Ninja Foodi · ${text(packet.product?.reportedModel || 'Label to check')} · recall 25-247</p></div></div><div class="button-row"><button class="primary-button" type="button" data-action="share-handoff">${navigator.share ? 'Share handoff link' : 'Copy handoff link'}</button>${navigator.share ? '<button class="secondary-button" type="button" data-action="copy-link">Copy link</button>' : ''}</div><p class="privacy-note"><span aria-hidden="true">✓</span> Shared: first names, recall identity, model note. Private progress stays in this case. Photos and official form details stay with their owner.</p>${localPreview ? '<p class="field-help">The shared link opens the public browser companion on the recipient’s device. Their case is saved separately there.</p>' : ''}<details class="export-block"><summary>View the link or export the portable card</summary><label for="handoff-link">Handoff link</label><textarea id="handoff-link" rows="3" readonly spellcheck="false">${text(handoffLink(packet))}</textarea><label for="handoff-json">Portable JSON</label><textarea id="handoff-json" rows="4" readonly spellcheck="false">${text(JSON.stringify(packet, null, 2))}</textarea><div class="button-row"><button class="secondary-button" type="button" data-action="copy-json">Copy JSON</button><button class="secondary-button" type="button" data-action="download-handoff">Download card</button></div></details><div class="role-switch"><span class="small-label">Try the other side of the handoff</span><button type="button" class="secondary-button" data-action="try-recipient">Continue as ${text(recipient)}</button><p class="small-copy">Demo role switch · the current case is archived and a fresh owner journal begins.</p></div>`;
 }
 
 function functionGuidance() {
@@ -292,10 +292,10 @@ const stepDetails = {
 function nextAction(c) {
   const next = c.nextAction;
   if (!next) return '';
-  if (next.tool === 'prepare_claim') return `<div class="next-action-card"><p class="eyebrow">Ready for the official program</p><h3>Your label and photo are ready.</h3><p>Prepare the request details, then open the manufacturer’s form to claim the free replacement lid.</p><button class="primary-button" type="button" data-action="next">Prepare my free-lid request <span aria-hidden="true">→</span></button></div>`;
+  if (next.tool === 'prepare_claim') return `<div class="next-action-card"><h3>Your label and photo are ready.</h3><p>Prepare the request details, then open the manufacturer’s form to claim the free replacement lid.</p><button class="primary-button" type="button" data-action="next">Prepare my free-lid request</button></div>`;
   if (next.tool === 'record_step') {
     const [heading, description] = stepDetails[next.args?.step] || [next.label, 'Record this step after you have completed it.'];
-    return `<div class="next-action-card"><p class="eyebrow">Your next step</p><h3>${text(heading)}</h3><p>${text(description)}</p>${next.args?.step === 'label_photo_ready' ? photoPicker() : ''}<button class="primary-button" type="button" data-action="next">${text(next.label)} <span aria-hidden="true">→</span></button><p class="provenance-line">Saved as an owner-reported step.</p></div>`;
+    return `<div class="next-action-card"><h3>${text(heading)}</h3><p>${text(description)}</p>${next.args?.step === 'label_photo_ready' ? photoPicker() : ''}<button class="primary-button" type="button" data-action="next">${text(next.label)}</button><p class="provenance-line">Saved as an owner-reported step.</p></div>`;
   }
   return '';
 }
@@ -307,7 +307,7 @@ function progress(c, { all = false } = {}) {
 }
 
 function acknowledgementForm() {
-  return `<form class="acknowledgement-form" data-form="claim"><label for="claim-reference">Confirmation reference <span class="optional-field">optional</span></label><input id="claim-reference" name="reference" placeholder="Reference from the manufacturer’s email" maxlength="160" autocomplete="off" /><p class="field-help">Use this step after receiving the manufacturer’s confirmation email. Your acknowledgement is saved as owner-reported.</p><button class="primary-button" type="submit">I received the confirmation email <span aria-hidden="true">→</span></button></form><div class="button-row"><button class="text-link" type="button" data-action="sample-ack">Demo: use SAMPLE-ACK →</button></div>`;
+  return `<form class="acknowledgement-form" data-form="claim"><label for="claim-reference">Confirmation reference <span class="optional-field">optional</span></label><input id="claim-reference" name="reference" placeholder="Reference from the manufacturer’s email" maxlength="160" autocomplete="off" /><p class="field-help">Use this step after receiving the manufacturer’s confirmation email. Your acknowledgement is saved as owner-reported.</p><button class="primary-button" type="submit">I received the confirmation email</button></form><div class="button-row"><button class="text-link" type="button" data-action="sample-ack">Demo: use SAMPLE-ACK</button></div>`;
 }
 
 function claimPanel(c) {
@@ -316,7 +316,7 @@ function claimPanel(c) {
     { name: 'Label photo', value: 'Model and serial clearly visible' },
     { name: 'Your contact and delivery details', value: 'Enter directly on the official form' },
   ];
-  return `<section class="official-claim"><span class="small-label">Official manufacturer recall program</span><h3>Your free-lid request is ready to start.</h3><p>Complete the form on SharkNinja’s recall-program website. Its acknowledgement arrives by email.</p><ul class="claim-fields">${fields.map((field) => `<li><strong>${text(field.name)}:</strong> ${text(field.value)}</li>`).join('')}</ul><a class="primary-button" href="${text(url(ui.claimPacket?.url || c.claimUrl))}" target="_blank" rel="noopener noreferrer">Open the official claim form <span aria-hidden="true">↗</span></a><p class="field-help">Opens the manufacturer’s external recall form in a new tab.</p></section>${acknowledgementForm()}`;
+  return `<section class="official-claim"><span class="small-label">Official manufacturer recall program</span><h3>Your free-lid request is ready to start.</h3><p>Complete the form on SharkNinja’s recall-program website. Its acknowledgement arrives by email.</p><ul class="claim-fields">${fields.map((field) => `<li><strong>${text(field.name)}:</strong> ${text(field.value)}</li>`).join('')}</ul><a class="primary-button" href="${text(url(ui.claimPacket?.url || c.claimUrl))}" target="_blank" rel="noopener noreferrer">Open the official claim form</a><p class="field-help">Opens the manufacturer’s external recall form in a new tab.</p></section>${acknowledgementForm()}`;
 }
 
 function followUp(c) {
@@ -327,22 +327,22 @@ function followUp(c) {
 
 function renderAwaiting(c) {
   const disposalNext = c.nextAction?.args?.step === 'old_lid_disposed';
-  return `<p class="eyebrow">03 / ${disposalNext ? 'One more step while you wait' : 'The handoff is in motion'}</p><h2>${disposalNext ? 'Request recorded.<br />Retire the original lid.' : 'The next step can wait.<br />Your case will keep.'}</h2><p class="body-copy">${disposalNext ? 'Follow the official program’s next instructions after registration. Keep pressure cooking stopped while the replacement is on its way.' : 'Your acknowledgement is saved. Keep pressure cooking stopped until the replacement lid arrives and the remedy is complete.'}</p><div class="receipt"><span class="receipt-icon" aria-hidden="true">✓</span><div><h3>${String(c.claimReference || '').startsWith('SAMPLE-') ? 'Sample acknowledgement saved' : 'Acknowledgement saved'}</h3><p>${text(c.claimReference || 'Recorded by the owner')} · owner-reported</p></div></div>${nextAction(c)}${followUp(c)}<div class="resume-note"><span>Saved. Reopen this page to pick up here.</span><button class="text-link" type="button" data-action="pause">Pause here ↗</button></div>`;
+  return `<h2>${disposalNext ? 'Request recorded.<br />Retire the original lid.' : 'The next step can wait.<br />Your case will keep.'}</h2><p class="body-copy">${disposalNext ? 'Follow the official program’s next instructions after registration. Keep pressure cooking stopped while the replacement is on its way.' : 'Your acknowledgement is saved. Keep pressure cooking stopped until the replacement lid arrives and the remedy is complete.'}</p><div class="receipt"><span class="receipt-icon" aria-hidden="true">✓</span><div><h3>${String(c.claimReference || '').startsWith('SAMPLE-') ? 'Sample acknowledgement saved' : 'Acknowledgement saved'}</h3><p>${text(c.claimReference || 'Recorded by the owner')} · owner-reported</p></div></div>${nextAction(c)}${followUp(c)}<div class="resume-note"><span>Saved. Reopen this page to pick up here.</span><button class="text-link" type="button" data-action="pause">Pause here</button></div>`;
 }
 
 function renderWorkspace(c) {
   if (ui.incoming) return renderIncoming(ui.incoming);
-  if (ui.paused) return `<span class="pause-symbol" aria-hidden="true">Ⅱ</span><p class="eyebrow">Saved for later</p><h2>We’ll keep your place.</h2><p class="body-copy">${text(c.owner)}’s case is saved at “${text(c.statusLabel)}”. Reopen this page whenever you’re ready.</p><div class="receipt"><span class="receipt-icon" aria-hidden="true">↗</span><div><h3>Next time</h3><p>${text(c.nextAction?.label || 'View your completed case')}</p></div></div><div class="button-row"><button class="primary-button" type="button" data-action="resume">Continue my case <span aria-hidden="true">→</span></button></div><p class="provenance-line">This preview demonstrates an interruption. Your saved domain state stays intact.</p>`;
+  if (ui.paused) return `<span class="pause-symbol" aria-hidden="true">Ⅱ</span><h2>We’ll keep your place.</h2><p class="body-copy">${text(c.owner)}’s case is saved at “${text(c.statusLabel)}”. Reopen this page whenever you’re ready.</p><div class="receipt"><span class="receipt-icon" aria-hidden="true">↗</span><div><h3>Next time</h3><p>${text(c.nextAction?.label || 'View your completed case')}</p></div></div><div class="button-row"><button class="primary-button" type="button" data-action="resume">Continue my case</button></div><p class="provenance-line">This preview demonstrates an interruption. Your saved domain state stays intact.</p>`;
   switch (c.stage) {
     case 'identify_product': return renderIdentify(c);
-    case 'confirm_current_owner': return `<p class="eyebrow">02 / A fresh check, from you</p><h2>${text(c.owner)}, check<br />the actual label.</h2><p class="body-copy">${c.priorOwner ? `${text(c.priorOwner)} passed on a model note. Your own label check turns it into a useful next step.` : 'The model note is a starting point. Read the label on the cooker you have now.'}</p><p class="inherited-note">${c.priorOwner ? `${text(c.priorOwner)}’s note` : 'Model note'}: <strong>${text(c.rawModel || 'OP301 I07')}</strong><br />Your physical-label confirmation comes next.</p>${labelForm(c)}`;
+    case 'confirm_current_owner': return `<h2>${text(c.owner)}, check<br />the actual label.</h2><p class="body-copy">${c.priorOwner ? `${text(c.priorOwner)} passed on a model note. Your own label check turns it into a useful next step.` : 'The model note is a starting point. Read the label on the cooker you have now.'}</p><p class="inherited-note">${c.priorOwner ? `${text(c.priorOwner)}’s note` : 'Model note'}: <strong>${text(c.rawModel || 'OP301 I07')}</strong><br />Your physical-label confirmation comes next.</p>${labelForm(c)}`;
     case 'handoff_prepared': return renderHandoff(c);
-    case 'remedy_required': return `<p class="eyebrow">03 / The remedy is specific</p><h2>Pause pressure cooking.<br />Keep the next step clear.</h2><p class="body-copy">Your model is listed in the US recall. The remedy replaces the pressure-cooking lid, free of charge.</p>${functionGuidance()}${nextAction(c)}${progress(c)}`;
-    case 'claim_ready': return `<p class="eyebrow">03 / A free replacement lid</p><h2>${c.nextAction?.tool === 'prepare_claim' ? 'Everything you need,<br />ready to hand over.' : 'One official form.<br />Then we keep your place.'}</h2><p class="body-copy">The manufacturer handles your replacement. Recall Relay keeps the next step and your progress together.</p>${c.nextAction?.tool === 'prepare_claim' ? `${nextAction(c)}${progress(c)}<details class="export-block"><summary>Already completed the official form?</summary>${acknowledgementForm()}</details>` : claimPanel(c)}`;
+    case 'remedy_required': return `<h2>Stop pressure cooking.<br />Get the replacement lid.</h2><p class="body-copy">Your model is listed in the US recall. The remedy replaces the pressure-cooking lid, free of charge.</p>${functionGuidance()}${nextAction(c)}${progress(c)}`;
+    case 'claim_ready': return `<h2>${c.nextAction?.tool === 'prepare_claim' ? 'Prepare your<br />replacement-lid request.' : 'Request your lid.<br />Keep your next step here.'}</h2><p class="body-copy">The manufacturer handles your replacement. Recall Relay keeps the next step and your progress together.</p>${c.nextAction?.tool === 'prepare_claim' ? `${nextAction(c)}${progress(c)}<details class="export-block"><summary>Already completed the official form?</summary>${acknowledgementForm()}</details>` : claimPanel(c)}`;
     case 'awaiting_replacement': return renderAwaiting(c);
-    case 'replacement_arrived': return `<p class="eyebrow">04 / Finish the handoff</p><h2>The new lid is here.<br />Let’s close the loop.</h2><p class="body-copy">Finish the official remedy by retiring the original pressure lid and fitting its replacement.</p>${nextAction(c)}${progress(c)}`;
-    case 'resolved': return `<span class="resolved-mark" aria-hidden="true">✓</span><p class="eyebrow">04 / Care, carried through</p><h2>A replacement lid.<br />A finished handoff.</h2><p class="body-copy">${text(c.owner)} recorded the replacement received, the original lid disposed of, and the new lid fitted following the manufacturer’s instructions.</p><div class="receipt"><span class="receipt-icon" aria-hidden="true">✓</span><div><h3>Remedy completed · owner-reported</h3><p>Your case history stays here. Official instructions stay linked alongside it.</p></div></div>${progress(c)}<div class="button-row"><button class="text-link" type="button" data-action="show-history">Read the case history ↗</button></div>`;
-    default: return `<p class="eyebrow">Your saved case</p><h2>${text(c.statusLabel)}</h2>${nextAction(c)}`;
+    case 'replacement_arrived': return `<h2>The new lid is here.<br />Let’s close the loop.</h2><p class="body-copy">Finish the official remedy by retiring the original pressure lid and fitting its replacement.</p>${nextAction(c)}${progress(c)}`;
+    case 'resolved': return `<span class="resolved-mark" aria-hidden="true">✓</span><h2>Replacement fitted.<br />Handoff complete.</h2><p class="body-copy">${text(c.owner)} recorded the replacement received, the original lid disposed of, and the new lid fitted following the manufacturer’s instructions.</p><div class="receipt"><span class="receipt-icon" aria-hidden="true">✓</span><div><h3>Remedy completed · owner-reported</h3><p>Your case history stays here. Official instructions stay linked alongside it.</p></div></div>${progress(c)}<div class="button-row"><button class="text-link" type="button" data-action="show-history">Read the case history</button></div>`;
+    default: return `<h2>${text(c.statusLabel)}</h2>${nextAction(c)}`;
   }
 }
 
@@ -364,15 +364,15 @@ function suggestions(c) {
 }
 
 function companionStep(c) {
-  if (ui.incoming) return { title: 'Care came with your cooker.', description: `${ui.incoming.senderLabel} shared a recall card. Open your own case and check the physical label.`, action: 'open-details', label: 'Open my recall card' };
+  if (ui.incoming) return { title: 'Your cooker has a recall card.', description: `${ui.incoming.senderLabel} shared a recall card. Open your own case and check the physical label.`, action: 'open-details', label: 'Open my recall card' };
   if (ui.paused) return { title: 'Your place is saved.', description: `Next time: ${c.nextAction?.label || 'Read your completed record'}.`, action: 'resume', label: 'Continue my case' };
-  if (c.stage === 'handoff_prepared') return { title: `Pass care along to ${ui.handoff?.recipientLabel || ui.recipient}.`, description: 'One link carries the recall and the next step. The current owner checks their own cooker.', action: 'share-handoff', label: navigator.share ? 'Share the recall card' : 'Copy the recall link' };
+  if (c.stage === 'handoff_prepared') return { title: `Send the recall to ${ui.handoff?.recipientLabel || ui.recipient}.`, description: 'One link carries the recall and the next step. The current owner checks their own cooker.', action: 'share-handoff', label: navigator.share ? 'Share the recall card' : 'Copy the recall link' };
   if (c.stage === 'identify_product' || c.stage === 'confirm_current_owner') return {
     title: c.priorOwner || ui.intent === 'self' || c.rawModel ? 'Start with the actual label.' : 'The cooker changed hands.',
     description: c.priorOwner ? `${c.priorOwner} shared a model note. Read the exact model on the cooker you have now.` : ui.intent === 'self' || c.rawModel ? 'Read the exact model on the physical label of the cooker you have now, then confirm it here.' : 'Pass the recall to its current owner, or check the cooker in your hands.',
     action: 'open-details', label: c.priorOwner || ui.intent === 'self' || c.rawModel ? 'Open the label check' : 'Start the handoff',
   };
-  if (c.stage === 'resolved') return { title: 'Care, carried through.', description: `${c.owner} reported the original lid retired and the replacement received and fitted. The completed record is saved.`, action: 'open-history', label: 'Read the case history' };
+  if (c.stage === 'resolved') return { title: 'Handoff complete.', description: `${c.owner} reported the original lid retired and the replacement received and fitted. The completed record is saved.`, action: 'open-history', label: 'Read the case history' };
   if (c.nextAction?.tool === 'record_claim') return { title: 'One official form. Then come back.', description: 'Submit your request to the manufacturer with the label photo and delivery details. Record progress when its confirmation email arrives.', href: url(c.claimUrl), label: 'Open the official claim form', secondary: 'I have the confirmation email' };
   if (c.nextAction?.tool === 'prepare_claim') return { title: 'Your free-lid request is ready to prepare.', description: 'Your label is checked and photo readiness is recorded. Bring the details together for the official form.', action: 'next', label: c.nextAction.label };
   const step = c.nextAction?.args?.step;
@@ -401,14 +401,15 @@ function renderContext(c) {
   const owner = ui.incoming?.recipientLabel || c.owner;
   $('#case-role').textContent = ui.incoming ? 'For the current owner' : c.stage === 'handoff_prepared' ? 'Ready to share' : c.priorOwner || c.model ? 'Current holder' : 'Sample household';
   $('#case-person').textContent = ui.incoming ? `${ui.incoming.senderLabel} → ${owner}` : c.priorOwner ? `${c.priorOwner} → ${owner}` : c.stage === 'handoff_prepared' ? `${owner} → ${ui.handoff?.recipientLabel || ui.recipient}` : `${owner}’s recall case`;
-  $('#case-version').textContent = ui.incoming ? 'Separate owner journal' : `Saved · r${c.revision}`;
+  $('#case-version').textContent = ui.incoming ? 'Separate owner journal' : `Saved / r${c.revision}`;
   $('#case-version').title = ui.incoming ? 'The handoff carries product context.' : `Case ${c.id}`;
   $('#case-context').dataset.caseId = c.id;
   $('#case-context').dataset.revision = String(c.revision);
   const step = companionStep(c);
-  $('#companion-display').innerHTML = `<p class="eyebrow">${ui.paused ? 'Pick up here next time' : 'Your next step'}</p><h2>${text(step.title)}</h2><p class="companion-copy">${text(step.description)}</p><div class="button-row">${step.href ? `<a class="primary-button" href="${text(step.href)}" target="_blank" rel="noopener noreferrer">${text(step.label)} <span aria-hidden="true">↗</span></a>` : `<button class="primary-button" type="button" data-action="${text(step.action)}">${text(step.label)} <span aria-hidden="true">→</span></button>`}</div>${step.secondary ? `<button class="text-link companion-secondary" type="button" data-action="open-details">${text(step.secondary)} →</button>` : ''}<p class="companion-footnote">${c.model ? `${text(c.model)} · US recall 25-247 · owner-reported progress` : 'US recall 25-247 · physical-label check first'}</p>`;
+  $('#companion-display').innerHTML = `<h2>${text(step.title)}</h2><p class="companion-copy">${text(step.description)}</p><div class="button-row">${step.href ? `<a class="primary-button" href="${text(step.href)}" target="_blank" rel="noopener noreferrer">${text(step.label)}</a>` : `<button class="primary-button" type="button" data-action="${text(step.action)}">${text(step.label)}</button>`}</div>${step.secondary ? `<button class="text-link companion-secondary" type="button" data-action="open-details">${text(step.secondary)}</button>` : ''}<p class="companion-footnote">${c.model ? `${text(c.model)} · US recall 25-247 · owner-reported progress` : 'US recall 25-247 · physical-label check first'}</p>`;
   $('#companion-display').hidden = !ui.focus;
   $('#workspace').hidden = ui.focus;
+  $('.skip-link').href = ui.focus ? '#companion-display' : '#workspace';
   $('#workspace').setAttribute('aria-live', ui.focus ? 'off' : 'polite');
   document.body.classList.toggle('is-focus', ui.focus);
   document.body.classList.toggle('has-progress', Boolean(ui.incoming || c.revision > 0));
@@ -542,7 +543,7 @@ async function runAction(action) {
 
 function commandReply(command, response, sources = []) {
   const element = $('#spoken-reply');
-  const links = sources.filter(source => url(source.href)).map(source => `<a href="${text(url(source.href))}" target="_blank" rel="noopener noreferrer">${text(source.label)} ↗</a>`).join(' · ');
+  const links = sources.filter(source => url(source.href)).map(source => `<a href="${text(url(source.href))}" target="_blank" rel="noopener noreferrer">${text(source.label)}</a>`).join(' · ');
   element.innerHTML = `<span class="user-message">You: ${text(command)}</span>${text(response)}${links ? `<span class="reply-sources">${links}</span>` : ''}`;
   element.hidden = false;
   ui.lastMessage = response;
@@ -754,7 +755,7 @@ async function start() {
     if (ui.incoming) { ui.focus = false; render(); }
     watchCase();
   } catch (error) {
-    $('#workspace').innerHTML = '<p class="eyebrow">Reconnect your case</p><h2>Let’s pick up the thread.</h2><p class="body-copy">Refresh this page once the local server is ready. On a static host, the browser-local simulator opens the same case tools.</p>';
+    $('#workspace').innerHTML = '<h2>Let’s pick up the thread.</h2><p class="body-copy">Refresh this page once the local server is ready. On a static host, the browser-local simulator opens the same case tools.</p>';
     banner(error.message || 'Open this page through its local server or static web host.', true);
   } finally {
     setBusy(false);

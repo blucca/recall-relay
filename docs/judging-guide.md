@@ -8,6 +8,8 @@
 - [Try the public browser companion](https://blucca.github.io/recall-relay/). It runs immediately and saves the sample case in that browser.
 - [Read the project story](project-story.md) and [product feedback](product-feedback.md).
 
+The browser interface was refreshed on October 13, 2026 with a high-legibility recall-record layout: an orange product folder, a clear current-holder strip, and larger Focus-view type. The 2:35 video preserves the original interface and its real MCP run; the handoff, label check and remedy sequence stay the same.
+
 The public companion uses the same domain engine as the MCP service. The steps below exercise the actual protocol and persistent service locally.
 
 ## Two-minute browser trial

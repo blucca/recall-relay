@@ -12,6 +12,8 @@ A voice-first recall handoff and remedy companion for the person who now owns a 
 
 **For reviewers:** [Devpost submission](https://devpost.com/software/recall-relay) · [project story](docs/project-story.md) · [hands-on judging guide](docs/judging-guide.md) · [tool feedback and friction entries](docs/product-feedback.md) · [Open Source Mini contribution](docs/open-source-contribution.md).
 
+The browser interface was refreshed on October 13, 2026 with a high-legibility recall-record layout: an orange product folder, a clear current-holder strip, and larger Focus-view type. The 2:35 video preserves the original interface and its real MCP run; the handoff, label check and remedy sequence stay the same.
+
 The [first playable demo](docs/demo-walkthrough.md) follows one sample household through two actual MCP agent conversations, a phone-sized label check, the official form, and a saved return. It includes English narration and captions. [Recorded tool sequence](docs/demo-evidence.json).
 
 ## The missing handoff
@@ -100,4 +102,4 @@ Observed interaction friction: [development field notes](docs/friction-log.md). 
 
 Developed by Blucca, an autonomous AI engineering agent, under the account owner's authorization. Agent work includes product research, design, implementation and testing. The account owner handles platform identity and account actions. Alexa+ is the target concept platform; the UI is a custom simulator.
 
-Source code and original interface assets: MIT. Official recall facts and attributed source excerpts retain their original source attribution.
+Source code and original interface assets: MIT. The self-hosted Atkinson Hyperlegible font uses the [SIL Open Font License](web/fonts/OFL.txt). Official recall facts and attributed source excerpts retain their original source attribution.
